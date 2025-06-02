@@ -1,0 +1,42 @@
+{
+  "ID": "GxWfsBfa2mEqxzBApz2PYC",
+  "MessageID": "aFrcz3YOJpByMR6conysLigMVpwRPWMAA5hosLjEo5M1-UIUzdHm5t7DvadL9GRR0jcThFYOxybDuc7u-LquB0W2aep6ytzlqLD-GZryHPQ=@example.com",
+  "From": {
+    "Name": "Sender",
+    "Address": "sender@example.com"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "email@example.com"
+    }
+  ],
+  "Cc": [],
+  "Bcc": [
+    {
+      "Name": "",
+      "Address": "example@mydomain.com"
+    }
+  ],
+  "ReplyTo": [
+    {
+      "Name": "RBC",
+      "Address": "reply-ABC.40148@alerts.rbc.com"
+    }
+  ],
+  "ReturnPath": "email=example.com+example=mydomain.com@forward.example.com",
+  "Subject": "Fw: Withdrawal Warning",
+  "ListUnsubscribe": {
+    "Header": "",
+    "Links": [],
+    "Errors": "",
+    "HeaderPost": ""
+  },
+  "Date": "2025-05-30T02:48:27Z",
+  "Tags": [],
+  "Text": "------- Forwarded Message -------\nFrom: RBC Royal Bank Alerts <rbcroyalbankalerts@alerts.rbc.com>\nDate: On Wednesday, May 28th, 2025 at 3:03 AM\nSubject: Withdrawal Warning\nTo: example@email.com <example@email.com>\n\n> ͏   ­ ͏   ­ ͏   ­ ͏   ­ ͏   ­ ͏   ­ ͏   ­ ͏   ­\n>\n> [RBC Royal Bank](https://click.alerts.rbc.com/?qs=abc)\n>\n> Hello,\n>\n> A withdrawal of $50.00 was debited from your bank account Daily. The full details of this transaction are below:\n>\n> Account:\n>\n> Daily\n>\n> Withdrawal Amount:\n>\n> $50.00\n>\n> Transaction Date:\n>\n> May 28, 2025\n>\n> Thank you!\n>\n> [View in a browser](https://click.alerts.rbc.com/?qs=abc)\n>\n> [Privacy & Security](https://click.alerts.rbc.com/?qs=abc) | [Legal](https://click.alerts.rbc.com/?qs=abc)\n>\n> RBC Royal Bank | Royal Bank of Canada\n> RBC WaterPark Place, 88 Queens Quay West, 12th Floor, Toronto, ON, M5J 0B8, Canada\n> www.rbcroyalbank.com\n>\n> ®/TM Trademark(s) of Royal Bank of Canada. RBC and Royal Bank are registered trademarks of Royal Bank of Canada.\n>\n> Copyright© Royal Bank of Canada, 2025\n>\n> Your personal information is important and valuable. Learn how to stay safe online:\n>\n> [Active Scam Alerts](https://click.alerts.rbc.com/?qs=abc) | [RBC Cyber Security](https://click.alerts.rbc.com/?qs=abc) | [Report Fraud to RBC](https://click.alerts.rbc.com/?qs=abc)\n>\n> Legal Disclaimers\n>\n> Please do not reply to this email, as it was sent from an unmonitored account.\n>\n> You are receiving this email as part of your Alerts subscription that you have requested. To make changes to your subscription, simply log on to RBC Royal Bank Online Banking.",
+  "HTML": "<div style=\"font-family: Arial, sans-serif; font-size: 14px;\"><br></div>\r\n<div class=\"abc abc-empty\" style=\"font-family: Arial, sans-serif; font-size: 14px;\">\r\n    <div class=\"abc-user abc-empty\"></div>\r\n    \r\n      </blockquote><br>\r\n    </div>",
+  "Size": 30638,
+  "Inline": [],
+  "Attachments": []
+}

@@ -1,0 +1,42 @@
+{
+  "ID": "HBSuQobbva6aVZ9vfq5Koh",
+  "MessageID": "70b63ad8-1aa6-428c-bf5mta1130.xt.local",
+  "From": {
+    "Name": "RBC Royal Bank Alerts",
+    "Address": "rbcroyalbankalerts@alerts.rbc.com"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "email@example.com"
+    }
+  ],
+  "Cc": [],
+  "Bcc": [
+    {
+      "Name": "",
+      "Address": "example@mydomain.com"
+    }
+  ],
+  "ReplyTo": [
+    {
+      "Name": "RBC",
+      "Address": "reply-ABC.40148@alerts.rbc.com"
+    }
+  ],
+  "ReturnPath": "email=example.com+example=mydomain.com@forward.example.com",
+  "Subject": "You made a purchase.",
+  "ListUnsubscribe": {
+    "Header": "",
+    "Links": [],
+    "Errors": "",
+    "HeaderPost": ""
+  },
+  "Date": "2025-06-01T07:01:46-06:00",
+  "Tags": [],
+  "Text": "\r\n\r\n\r\nRBC Royal Bank\r\n\r\n \r\nhttps://click.alerts.rbc.com/?qs=a03b4a296400 \r\nView Online\r\n\r\n\r\n\r\n\r\n\r\nhttps://click.alerts.rbc.com/?qs=c61f29d2009929fde45cb4060cb \r\n\r\n \r\n\r\n\r\nHello,\r\n\r\nAs requested, we&rsquo;re letting you know that a purchase of $26.19 was made on your RBC Royal Bank credit card account ************0000  on June 01, 2025 towards UBER EATS.\r\n\r\n\r\n\r\nIf you don&rsquo;t recognize this transaction, please call us at 1&#8209;800&#8209;769&#8209;2512 (available 24/7) and we&rsquo;ll be happy to help.\r\n\r\nAccount:\r\n\r\n************0000 \r\n \r\n \r\n\r\nPurchase Amount:\r\n\r\n$26.19\r\n\r\nTransaction Date:\r\n\r\nJune 01, 2025\r\n\r\nTransaction Description:\r\n\r\nUBER EATS\r\n\r\n\r\n\r\n \r\n\r\n\r\n\r\n\r\nThank you!\r\n\r\n \r\n \r\n\r\n\r\n-\r\n\r\nhttps://click.alerts.rbc.com/?qs=fd1ef675923f832095a24a4a00121e2565ebd6792b \r\nPrivacy & Security  | \r\nhttps://click.alerts.rbc.com/?qs=7f9312090c0ab044a5cac7f3dfe1f9f44ae2ae4c83cf5 \r\nLegal \r\n-\r\n\r\n\r\n\r\n\r\n \r\n\r\nRBC Royal Bank | Royal Bank of Canada RBC WaterPark Place, 88 Queens Quay West, 12th Floor, Toronto, ON, M5J 0B8, Canada \r\nhttps://click.alerts.rbc.com/?qs=d204a83c4303c1e55854c73af7ca18d9ae8f2d3797cfd3a9fe36cccd825bda \r\nwww.rbcroyalbank.com.\r\n\r\n(R)/TM\r\n\r\nTrademark(s) of Royal Bank of Canada. RBC and Royal Bank are registered trademarks of Royal Bank of Canada.\r\n\r\n(c)\r\n\r\nRoyal Bank of Canada 2025\r\n\r\n \r\n-\r\n\r\n \r\n\r\nCommunicating Safely Online\r\n\r\n \r\n\r\nRegular, unencrypted email is not secure. You should never include personal or confidential information in a regular email. Be careful when opening messages, links or attachments received through digital channels, including regular emails, text messages and social media messages. If you receive a message that appears to be from RBC that is suspicious please report it to us and then delete it. Do not provide personal information like passwords.\r\n\r\n \r\n\r\nNeed Help?\r\n\r\nTo discuss your personal information with us safely, visit our \r\nhttps://click.alerts.rbc.com/?qs=296702801a32b4437f9f9583a93a1046cd3f63af2823d27d709ace77702db3f1867e8e589a50ff57b3a4a33b21eba73f323dbb476eacec6a \r\ncustomer service page. Please note this email was sent from an unmonitored inbox. Do not reply.\r\n\r\n \r\n\r\nFor current scam alerts and tips to protect yourself visit:\r\n\r\nhttps://click.alerts.rbc.com/?qs=4809adf7516a6225e227f117239bd40b06ef373973d1d2185b \r\nRBC Cyber Security | \r\nhttps://click.alerts.rbc.com/?qs=e4729494b1667c7366c9f4dcd19b5feee3adf8c471e5be82c29026217262712 \r\nActive Scam Alerts\r\n\r\n \r\n\r\n\r\n \r\n\r\n\r\n",
+  "HTML": "\r\n\r\n\r\n<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">\r\n<html XMLNS=\"http://www.w3.org/1999/xhtml\" 60747c&d=40148&bmt=0\" width=\"1\" height=\"1\" alt=\"\">\r\n   </body>\r\n</html>\r\n",
+  "Size": 53543,
+  "Inline": [],
+  "Attachments": []
+}

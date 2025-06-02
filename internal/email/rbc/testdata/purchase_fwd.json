@@ -1,0 +1,32 @@
+{
+  "ID": "oLZCJAE45YJXdKArWQjUeq",
+  "MessageID": "Rkumg31JxTAFuDozPg2Q-3BmguWTAsXg-CBkZeLF24BfrQN0Qq3URwITELum8QnY40UEgRoqmkcKoHgmFkxsZcd0qe7UlCiheg5WiNJOI6c=@pm.me",
+  "From": {
+    "Name": "Sender",
+    "Address": "sender@example.com"
+  },
+  "To": [
+    {
+      "Name": "",
+      "Address": "email@example.com"
+    }
+  ],
+  "Cc": [],
+  "Bcc": [],
+  "ReplyTo": [],
+  "ReturnPath": "email=example.com+example=mydomain.com@forward.example.com",
+  "Subject": "Fw: You made a purchase.",
+  "ListUnsubscribe": {
+    "Header": "",
+    "Links": [],
+    "Errors": "",
+    "HeaderPost": ""
+  },
+  "Date": "2025-05-25T19:10:29Z",
+  "Tags": [],
+  "Text": "------- Forwarded Message -------\nFrom: RBC Royal Bank Alerts <rbcroyalbankalerts@alerts.rbc.com>\nDate: On Sunday, May 25th, 2025 at 2:22 PM\nSubject: You made a purchase.\nTo: example.com <example.com>\n\n> [View Online](https://click.alerts.rbc.com/?qs=abc)\n>\n> [RBC Royal Bank](https://click.alerts.rbc.com/?qs=abc)\n>\n> Hello,\n>\n> As requested, we’re letting you know that a purchase of $19.12 was made on your RBC Royal Bank credit card account ************9165 on May 25, 2025 towards SOME STORE.\n>\n> If you don’t recognize this transaction, please call us at 1‑800‑769‑2512 (available 24/7) and we’ll be happy to help.\n>\n> Account:\n>\n> ************0000\n>\n> Purchase Amount:\n>\n> $19.12\n>\n> Transaction Date:\n>\n> May 25, 2025\n>\n> Transaction Description:\n>\n> SOME STORE\n>\n> Thank you!\n>\n> -\n> [Privacy & Security](https://click.alerts.rbc.com/?qs=abc) | [Legal](https://click.alerts.rbc.com/?qs=abc)\n> -\n>\n> RBC Royal Bank | Royal Bank of Canada RBC WaterPark Place, 88 Queens Quay West, 12th Floor, Toronto, ON, M5J 0B8, Canada [www.rbcroyalbank.com](https://click.alerts.rbc.com/?qs=abc).\n>\n> ®/TM\n>\n> Trademark(s) of Royal Bank of Canada. RBC and Royal Bank are registered trademarks of Royal Bank of Canada.\n>\n> ©\n>\n> Royal Bank of Canada 2025\n>\n> -\n>\n> Communicating Safely Online\n>\n> Regular, unencrypted email is not secure. You should never include personal or confidential information in a regular email. Be careful when opening messages, links or attachments received through digital channels, including regular emails, text messages and social media messages. If you receive a message that appears to be from RBC that is suspicious please report it to us and then delete it. Do not provide personal information like passwords.\n>\n> Need Help?\n> To discuss your personal information with us safely, visit our [customer service](https://click.alerts.rbc.com/?qs=abc) page. Please note this email was sent from an unmonitored inbox. Do not reply.\n>\n> For current scam alerts and tips to protect yourself visit:\n> [RBC Cyber Security](https://click.alerts.rbc.com/?qs=abc) | [Active Scam Alerts](https://click.alerts.rbc.com/?qs=abc)",
+  "HTML": "<div style=\"font-family: Arial, sans-serif; font-size: 14px;\"><br></div>\r\n<div class=\"abc abc-empty\" style=\"font-f   </div>",
+  "Size": 50186,
+  "Inline": [],
+  "Attachments": []
+}
