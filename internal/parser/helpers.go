@@ -36,33 +36,37 @@ func BuildTransaction(
 	dir domain.Direction,
 	desc string,
 ) (*domain.Transaction, error) {
-	// 1. parse when the email was received
+
 	recv, err := time.Parse(time.RFC3339, m.Date)
 	if err != nil {
 		return nil, err
 	}
 
-	// 2. parse the transaction date from email body
-	txDate, err := ParseEmailDate(fields["txdate"])
+	bodyDate, err := ParseEmailDate(fields["txdate"])
 	if err != nil {
 		return nil, err
 	}
 
-	// 3. normalize amount string (e.g. "1,234.56" → "1234.56")
+	// decide which timestamp to keep
+	var final time.Time
+	if recv.Year() == bodyDate.Year() && recv.YearDay() == bodyDate.YearDay() {
+		final = recv
+	} else {
+		final = bodyDate
+	}
+
 	amount := strings.ReplaceAll(fields["amount"], ",", "")
 
 	return &domain.Transaction{
-		EmailID:         m.ID,
-		EmailReceivedAt: recv,
-		TxDate:          txDate,
-		TxBank:          bank,
-		TxAccount:       fields["account"],
-		TxAmount:        amount,
-		TxCurrency:      currency,
-		TxDirection:     dir,
-		TxDesc:          desc,
-		Category:        "",
-		Merchant:        "",
-		UserNotes:       "",
+		EmailID:     m.ID,
+		TxDate:      final,
+		TxBank:      bank,
+		TxAccount:   fields["account"],
+		TxAmount:    amount,
+		TxCurrency:  currency,
+		TxDirection: dir,
+		TxDesc:      desc,
+		Category:    "",
+		UserNotes:   "",
 	}, nil
 }

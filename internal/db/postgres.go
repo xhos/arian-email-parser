@@ -48,9 +48,7 @@ func (w *DB) ensureSchema() error {
 	const ddl = `
 create table if not exists transactions (
   id serial primary key,
-
   email_id          text     not null,
-  email_received_at timestamptz not null,
 
   tx_date      timestamptz   not null,
   tx_bank      text          not null,
@@ -81,7 +79,6 @@ func (w *DB) Insert(tx *domain.Transaction) error {
 insert into transactions (
   id,
   email_id,
-  email_received_at,
   tx_date,
   tx_bank,
   tx_account,
@@ -96,7 +93,6 @@ insert into transactions (
 values (
   default,
   :email_id,
-  :email_received_at,
   :tx_date,
   :tx_bank,
   :tx_account,
@@ -110,18 +106,17 @@ values (
 );`
 
 	data := map[string]any{
-		"email_id":          tx.EmailID,
-		"email_received_at": tx.EmailReceivedAt,
-		"tx_date":           tx.TxDate,
-		"tx_bank":           tx.TxBank,
-		"tx_account":        tx.TxAccount,
-		"tx_amount":         tx.TxAmount,
-		"tx_currency":       tx.TxCurrency,
-		"tx_direction":      string(tx.TxDirection),
-		"tx_desc":           tx.TxDesc,
-		"category":          tx.Category,
-		"merchant":          tx.Merchant,
-		"user_notes":        tx.UserNotes,
+		"email_id":     tx.EmailID,
+		"tx_date":      tx.TxDate,
+		"tx_bank":      tx.TxBank,
+		"tx_account":   tx.TxAccount,
+		"tx_amount":    tx.TxAmount,
+		"tx_currency":  tx.TxCurrency,
+		"tx_direction": string(tx.TxDirection),
+		"tx_desc":      tx.TxDesc,
+		"category":     tx.Category,
+		"merchant":     tx.Merchant,
+		"user_notes":   tx.UserNotes,
 	}
 
 	_, err := w.NamedExec(q, data)
