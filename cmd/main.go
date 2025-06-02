@@ -1,21 +1,35 @@
 package main
 
 import (
-	"arian-parser/internal/email"
-	"context"
-	"fmt"
-	"log"
+	"os"
+
+	"arian-parser/internal/db"
+	"arian-parser/internal/ingest"
+	"arian-parser/internal/mailpit"
+
+	"github.com/charmbracelet/log"
 )
 
 func main() {
-	ctx := context.Background()
-	client, err := email.NewClient()
+	logger := log.NewWithOptions(os.Stdout, log.Options{Prefix: "arian"})
+
+	mp, err := mailpit.NewClient()
 	if err != nil {
-		log.Fatal(err)
+		logger.Fatal("mailpit init", "err", err)
 	}
-	ids, _ := client.GetUnreadEmails(ctx)
-	for _, id := range ids {
-		data, _ := client.GetEmail(ctx, id)
-		fmt.Println(string(data))
+
+	dbConn, err := db.New(os.Getenv("POSTGRES_URL"))
+	if err != nil {
+		logger.Fatal("db init", "err", err)
+	}
+
+	proc := &ingest.Processor{
+		MP:  mp,
+		DB:  dbConn,
+		Log: logger,
+	}
+
+	if err := proc.RunOnce(); err != nil {
+		logger.Error("processor", "err", err)
 	}
 }
