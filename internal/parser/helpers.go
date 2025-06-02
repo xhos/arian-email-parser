@@ -34,34 +34,35 @@ func BuildTransaction(
 	fields map[string]string,
 	bank, currency string,
 	dir domain.Direction,
-	merchant string,
+	desc string,
 ) (*domain.Transaction, error) {
-	// 1. parse ReceivedAt (RFC3339 from Mailpit)
+	// 1. parse when the email was received
 	recv, err := time.Parse(time.RFC3339, m.Date)
 	if err != nil {
 		return nil, err
 	}
 
-	// 2. parse the "tx date" from the email body
+	// 2. parse the transaction date from email body
 	txDate, err := ParseEmailDate(fields["txdate"])
 	if err != nil {
 		return nil, err
 	}
 
-	// 3. strip commas from the captured amount
-	rawAmt := strings.ReplaceAll(fields["amount"], ",", "")
+	// 3. normalize amount string (e.g. "1,234.56" → "1234.56")
+	amount := strings.ReplaceAll(fields["amount"], ",", "")
 
 	return &domain.Transaction{
-		Bank:       bank,
-		EmailID:    m.ID,
-		ReceivedAt: recv,
-		TxnDate:    txDate,
-		Account:    fields["account"],
-		Amount:     rawAmt,
-		Currency:   currency,
-		Direction:  dir,
-		Merchant:   merchant,
-		Raw:        m.Text,
-		Meta:       nil,
+		EmailID:         m.ID,
+		EmailReceivedAt: recv,
+		TxDate:          txDate,
+		TxBank:          bank,
+		TxAccount:       fields["account"],
+		TxAmount:        amount,
+		TxCurrency:      currency,
+		TxDirection:     dir,
+		TxDesc:          desc,
+		Category:        "",
+		Merchant:        "",
+		UserNotes:       "",
 	}, nil
 }

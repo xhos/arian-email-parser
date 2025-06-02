@@ -10,12 +10,12 @@ import (
 )
 
 type expectedTransactionDetails struct {
-	Account   string
-	Amount    string
-	Date      time.Time
-	Currency  string
-	Direction domain.Direction
-	Merchant  string
+	Account     string
+	Amount      string
+	Date        time.Time
+	Currency    string
+	Direction   domain.Direction
+	Description string
 }
 
 func assertTransaction(
@@ -41,30 +41,30 @@ func assertTransaction(
 		t.Fatalf("Match(meta) was false for %s; subject=%q", fixturePath, meta.Subject)
 	}
 
-	txn, err := p.Parse(meta)
+	tx, err := p.Parse(meta)
 	if err != nil {
 		t.Fatalf("Parse(meta) returned error for %s: %v", fixturePath, err)
 	}
-	if txn == nil {
+	if tx == nil {
 		t.Fatalf("Parse(meta) returned nil Transaction for %s but expected a real one", fixturePath)
 	}
 
-	if txn.Account != expected.Account {
-		t.Errorf("Account = %q; want %q (fixture: %s)", txn.Account, expected.Account, fixturePath)
+	if tx.TxAccount != expected.Account {
+		t.Errorf("Account = %q; want %q (fixture: %s)", tx.TxAccount, expected.Account, fixturePath)
 	}
-	if txn.Amount != expected.Amount {
-		t.Errorf("Amount = %q; want %q (fixture: %s)", txn.Amount, expected.Amount, fixturePath)
+	if tx.TxAmount != expected.Amount {
+		t.Errorf("Amount = %q; want %q (fixture: %s)", tx.TxAmount, expected.Amount, fixturePath)
 	}
-	if !txn.TxnDate.Equal(expected.Date) {
-		t.Errorf("TxnDate = %v; want %v (fixture: %s)", txn.TxnDate, expected.Date, fixturePath)
+	if !tx.TxDate.Equal(expected.Date) {
+		t.Errorf("TxnDate = %v; want %v (fixture: %s)", tx.TxDate, expected.Date, fixturePath)
 	}
-	if txn.Currency != expected.Currency {
-		t.Errorf("Currency = %q; want %q (fixture: %s)", txn.Currency, expected.Currency, fixturePath)
+	if tx.TxCurrency != expected.Currency {
+		t.Errorf("Currency = %q; want %q (fixture: %s)", tx.TxCurrency, expected.Currency, fixturePath)
 	}
-	if txn.Direction != expected.Direction {
-		t.Errorf("Direction = %v; want %v (fixture: %s)", txn.Direction, expected.Direction, fixturePath)
+	if tx.TxDirection != expected.Direction {
+		t.Errorf("Direction = %v; want %v (fixture: %s)", tx.TxDirection, expected.Direction, fixturePath)
 	}
-	if txn.Merchant != expected.Merchant {
-		t.Errorf("Merchant = %q; want %q (fixture: %s)", txn.Merchant, expected.Merchant, fixturePath)
+	if tx.TxDesc != expected.Description {
+		t.Errorf("Merchant = %q; want %q (fixture: %s)", tx.TxDesc, expected.Description, fixturePath)
 	}
 }

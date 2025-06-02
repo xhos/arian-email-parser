@@ -19,7 +19,7 @@ type Parser interface {
 	Parse(meta EmailMeta) (*domain.Transaction, error)
 }
 
-// toEmailMeta unmarshals the raw JSON from Mailpit into EmailMeta
+// ToEmailMeta unmarshals the raw JSON from Mailpit into EmailMeta
 func ToEmailMeta(id string, raw []byte) (EmailMeta, error) {
 	var m struct {
 		Subject string `json:"Subject"`

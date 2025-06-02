@@ -10,17 +10,17 @@ const (
 )
 
 type Transaction struct {
-	ID         string    // db primary key (set on insert)
-	Bank       string    // "rbc"
-	EmailID    string    // Mailpit message ID
-	ReceivedAt time.Time // when email arrived
-	TxnDate    time.Time // date reported in email
-	Account    string
-	Amount     string
-	Currency   string
-	Direction  Direction // in / out
-	Category   string    // later AI-filled
-	Merchant   string
-	Raw        string            // entire email body or hash
-	Meta       map[string]string // sparse extras (sender, etc.)
+	ID              string    // serial primary key (ignored on insert)
+	EmailID         string    // message ID from Mailpit or similar
+	EmailReceivedAt time.Time // when the email was ingested
+	TxDate          time.Time // date extracted from email body
+	TxBank          string    // e.g. "rbc"
+	TxAccount       string    // e.g. "****1234"
+	TxAmount        string    // "1234.56" (to preserve exact input for NUMERIC)
+	TxCurrency      string    // e.g. "CAD"
+	TxDirection     Direction // "in" or "out"
+	TxDesc          string    // raw transaction description (parsed from email)
+	Category        string    // to be AI-assigned later
+	Merchant        string    // inferred or parsed from description
+	UserNotes       string    // manually entered by user later
 }

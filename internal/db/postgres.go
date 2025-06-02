@@ -46,75 +46,94 @@ func New(dsn string) (*DB, error) {
 // ensureSchema creates the transactions table (if needed), adds a unique index on email_id and indexes txn_date for faster queries.
 func (w *DB) ensureSchema() error {
 	const ddl = `
-CREATE TABLE IF NOT EXISTS transactions (
-    id           SERIAL PRIMARY KEY,
-    bank         TEXT NOT NULL,
-    email_id     TEXT NOT NULL,
-    received_at  TIMESTAMPTZ NOT NULL,
-    txn_date     TIMESTAMPTZ NOT NULL,
-    account      TEXT NOT NULL,
-    amount       NUMERIC(18,2) NOT NULL,
-    currency     TEXT NOT NULL,
-    direction    TEXT NOT NULL,
-    category     TEXT,
-    merchant     TEXT NOT NULL,
-    raw          TEXT NOT NULL,
-    meta         JSONB DEFAULT '{}'::jsonb
+create table if not exists transactions (
+  id serial primary key,
+
+  email_id          text     not null,
+  email_received_at timestamptz not null,
+
+  tx_date      timestamptz   not null,
+  tx_bank      text          not null,
+  tx_account   text          not null,
+  tx_amount    numeric(18,2) not null,
+  tx_currency  text          not null,
+  tx_direction text          not null,
+  tx_desc      text,
+
+  category   text,
+  merchant   text,
+  user_notes text
 );
 
-CREATE UNIQUE INDEX IF NOT EXISTS idx_transactions_email_id
-    ON transactions(email_id);
+create unique index if not exists idx_transactions_email_id
+  on transactions(email_id);
 
-CREATE INDEX IF NOT EXISTS idx_transactions_txn_date
-    ON transactions(txn_date);
+create index if not exists idx_transactions_tx_date
+  on transactions(tx_date);
 `
 	_, err := w.Exec(ddl)
 	return err
 }
 
-// Insert inserts a transaction into the DB. If email_id already exists, it returns ErrEmailExists
+// Insert inserts a transaction into the DB, skipping duplicates
 func (w *DB) Insert(tx *domain.Transaction) error {
 	const q = `
-INSERT INTO transactions
-  (bank, email_id, received_at, txn_date, account, amount, currency,
-   direction, category, merchant, raw, meta)
-VALUES
-  (:bank, :email_id, :received_at, :txn_date, :account, :amount, :currency,
-   :direction, :category, :merchant, :raw, :meta);
-`
+insert into transactions (
+  id,
+  email_id,
+  email_received_at,
+  tx_date,
+  tx_bank,
+  tx_account,
+  tx_amount,
+  tx_currency,
+  tx_direction,
+  tx_desc,
+  category,
+  merchant,
+  user_notes
+)
+values (
+  default,
+  :email_id,
+  :email_received_at,
+  :tx_date,
+  :tx_bank,
+  :tx_account,
+  :tx_amount,
+  :tx_currency,
+  :tx_direction,
+  :tx_desc,
+  :category,
+  :merchant,
+  :user_notes
+);`
 
 	data := map[string]any{
-		"bank":        tx.Bank,
-		"email_id":    tx.EmailID,
-		"received_at": tx.ReceivedAt,
-		"txn_date":    tx.TxnDate,
-		"account":     tx.Account,
-		"amount":      tx.Amount,
-		"currency":    tx.Currency,
-		"direction":   string(tx.Direction),
-		"category":    tx.Category,
-		"merchant":    tx.Merchant,
-		"raw":         tx.Raw,
-		"meta":        tx.Meta,
+		"email_id":          tx.EmailID,
+		"email_received_at": tx.EmailReceivedAt,
+		"tx_date":           tx.TxDate,
+		"tx_bank":           tx.TxBank,
+		"tx_account":        tx.TxAccount,
+		"tx_amount":         tx.TxAmount,
+		"tx_currency":       tx.TxCurrency,
+		"tx_direction":      string(tx.TxDirection),
+		"tx_desc":           tx.TxDesc,
+		"category":          tx.Category,
+		"merchant":          tx.Merchant,
+		"user_notes":        tx.UserNotes,
 	}
 
 	_, err := w.NamedExec(q, data)
 	if err != nil {
-		if isUniqueViolation(err) {
-			return ErrEmailExists
+		if strings.Contains(err.Error(), "duplicate key value violates unique constraint") {
+			w.log.Info("duplicate email_id, skipping insert", "email_id", tx.EmailID)
+			return nil
 		}
-		w.log.Warn("insert failed", "err", err)
+		w.log.Warn("insert failed", "email_id", tx.EmailID, "err", err)
 		return err
 	}
 	return nil
-}
-
-// ErrEmailExists indicates a duplicate email_id
-var ErrEmailExists = fmt.Errorf("email_id already exists")
-
-// isUniqueViolation checks if the error is a UNIQUE constraint violation
-func isUniqueViolation(err error) bool {
-	return strings.Contains(err.Error(), "duplicate key value violates unique constraint")
 }
 
 // Close shuts down the DB connection (logs a message, returns any error)

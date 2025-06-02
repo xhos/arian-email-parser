@@ -73,7 +73,11 @@ func (c *Client) doRequest(method, rel string) ([]byte, error) {
 		return nil, err
 	}
 
-	defer res.Body.Close()
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+		}
+	}(res.Body)
 
 	if res.StatusCode != http.StatusOK {
 		body, _ := io.ReadAll(res.Body)

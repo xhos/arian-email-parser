@@ -1,4 +1,4 @@
-// this exists solely to pull in every parser via blank import
+// Package all exists solely to pull in every parser via blank import
 package all
 
 import (
