@@ -17,7 +17,7 @@ func TestDepositParser(t *testing.T) {
 		expectedTransactionDetails{
 			Account:     "Savings",
 			Amount:      "42000.16",
-			Date:        time.Date(2025, time.May, 31, 0, 0, 0, 0, time.UTC),
+			Date:        time.Date(2025, time.May, 31, 10, 27, 46, 0, time.FixedZone("UTC-6", -6*60*60)),
 			Currency:    "CAD",
 			Direction:   domain.In,
 			Description: "RBC Deposit",

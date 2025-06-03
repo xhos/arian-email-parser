@@ -17,7 +17,7 @@ func TestWithdrawalParser(t *testing.T) {
 		expectedTransactionDetails{
 			Account:     "Savings",
 			Amount:      "2200.00",
-			Date:        time.Date(2025, time.June, 1, 0, 0, 0, 0, time.UTC),
+			Date:        time.Date(2025, time.June, 1, 18, 32, 41, 0, time.FixedZone("UTC-6", -6*60*60)),
 			Currency:    "CAD",
 			Direction:   domain.Out,
 			Description: "RBC Withdrawal",
