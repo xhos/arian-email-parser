@@ -1,0 +1,114 @@
+name: Build and Push Docker to GHCR
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*.*.*' # e.g., v1.2.3
+  workflow_dispatch: # allows manual trigger from GitHub UI
+
+env:
+  IMAGE_NAME: arian # your image name
+  REGISTRY: ghcr.io
+  GO_VERSION: 1.21
+
+permissions:
+  contents: read # for checkout
+  packages: write # to push to GHCR
+  id-token: write # if you use OIDC (not needed for GHCR)
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    steps:
+      # ────────────────────────────────
+      # 1. Checkout code
+      # ────────────────────────────────
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # fetch all history for tags
+
+      # ────────────────────────────────
+      # 2. Set up Go (for optional testing)
+      # ────────────────────────────────
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: ${{ env.GO_VERSION }}
+
+      # ────────────────────────────────
+      # 3. Run tests (optional; skip if not needed)
+      # ────────────────────────────────
+      - name: Run Go tests
+        run: |
+          go test ./... -v
+
+      # ────────────────────────────────
+      # 4. Set up Docker Buildx (for multi-arch & caching)
+      # ────────────────────────────────
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # ────────────────────────────────
+      # 5. Log in to GHCR
+      # ────────────────────────────────
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # ────────────────────────────────
+      # 6. Cache Go modules
+      # ────────────────────────────────
+      - name: Cache Go modules
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cache/go-build
+            ${{ github.workspace }}/go/pkg/mod
+          key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+          restore-keys: |
+            ${{ runner.os }}-go-
+
+      # ────────────────────────────────
+      # 7. Build the Docker image
+      # ────────────────────────────────
+      - name: Build Docker image
+        id: build-image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: false # only build locally; push later
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.repository }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.repository }}:latest
+
+      # ────────────────────────────────
+      # 8. Push tagged images to GHCR
+      # ────────────────────────────────
+      - name: Push Docker image to GHCR
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: |
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.repository }}:${{ github.sha }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.repository }}:latest
+
+      # ────────────────────────────────
+      # 9. On release tags, also push semver tag
+      # ────────────────────────────────
+      - name: Push semver tag (only on tags)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          file: ./Dockerfile
+          push: true
+          tags: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ github.repository }}:${{ github.ref_name }}
