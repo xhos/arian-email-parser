@@ -71,6 +71,11 @@ func newHTTPServer(addr, path string, proc *ingest.Processor, lg *log.Logger) *h
 		fmt.Fprintln(w, "ok")
 	})
 
+	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+		fmt.Fprintln(w, "ok")
+	})
+
 	return &http.Server{
 		Addr:              addr,
 		Handler:           mux,
