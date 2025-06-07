@@ -1,6 +1,7 @@
 package rbc
 
 import (
+	"fmt"
 	"os"
 	"testing"
 	"time"
@@ -52,8 +53,8 @@ func assertTransaction(
 	if tx.TxAccount != expected.Account {
 		t.Errorf("Account = %q; want %q (fixture: %s)", tx.TxAccount, expected.Account, fixturePath)
 	}
-	if tx.TxAmount != expected.Amount {
-		t.Errorf("Amount = %q; want %q (fixture: %s)", tx.TxAmount, expected.Amount, fixturePath)
+	if fmt.Sprintf("%.2f", tx.TxAmount) != expected.Amount {
+		t.Errorf("Amount = %q; want %q (fixture: %s)", fmt.Sprintf("%.2f", tx.TxAmount), expected.Amount, fixturePath)
 	}
 	if !tx.TxDate.Equal(expected.Date) {
 		t.Errorf("TxnDate = %v; want %v (fixture: %s)", tx.TxDate, expected.Date, fixturePath)

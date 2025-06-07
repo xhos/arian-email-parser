@@ -3,6 +3,7 @@ package parser
 import (
 	"fmt"
 	"regexp"
+	"strconv"
 	"strings"
 	"time"
 
@@ -55,17 +56,24 @@ func BuildTransaction(
 		final = bodyDate
 	}
 
-	amount := strings.ReplaceAll(fields["amount"], ",", "")
+	rawAmt := strings.ReplaceAll(fields["amount"], ",", "")
+	amt, err := strconv.ParseFloat(rawAmt, 64)
+	if err != nil {
+		return nil, err
+	}
 
 	return &domain.Transaction{
-		EmailID:     m.ID,
-		TxDate:      final,
-		TxBank:      bank,
-		TxAccount:   fields["account"],
-		TxAmount:    amount,
-		TxDirection: dir,
-		TxDesc:      desc,
-		Category:    "",
-		UserNotes:   "",
+		EmailID:         m.ID,
+		TxDate:          final,
+		TxBank:          bank,
+		TxAccount:       fields["account"],
+		TxAmount:        amt,
+		TxDirection:     dir,
+		TxDesc:          desc,
+		Category:        "",
+		UserNotes:       "",
+		ForeignAmount:   nil,
+		ForeignCurrency: nil,
+		ExchangeRate:    nil,
 	}, nil
 }
