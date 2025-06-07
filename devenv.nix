@@ -9,5 +9,11 @@
     go fmt ./...
   '';
 
+  git-hooks.hooks = {
+    gotest.enable = true;
+    gofmt.enable = true;
+    govet.enable = true;
+  };
+
   dotenv.enable = true;
 }

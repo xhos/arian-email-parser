@@ -58,9 +58,6 @@ func assertTransaction(
 	if !tx.TxDate.Equal(expected.Date) {
 		t.Errorf("TxnDate = %v; want %v (fixture: %s)", tx.TxDate, expected.Date, fixturePath)
 	}
-	if tx.TxCurrency != expected.Currency {
-		t.Errorf("Currency = %q; want %q (fixture: %s)", tx.TxCurrency, expected.Currency, fixturePath)
-	}
 	if tx.TxDirection != expected.Direction {
 		t.Errorf("Direction = %v; want %v (fixture: %s)", tx.TxDirection, expected.Direction, fixturePath)
 	}

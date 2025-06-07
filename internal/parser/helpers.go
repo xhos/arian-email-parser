@@ -63,7 +63,6 @@ func BuildTransaction(
 		TxBank:      bank,
 		TxAccount:   fields["account"],
 		TxAmount:    amount,
-		TxCurrency:  currency,
 		TxDirection: dir,
 		TxDesc:      desc,
 		Category:    "",
