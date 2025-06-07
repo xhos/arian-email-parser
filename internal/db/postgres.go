@@ -48,19 +48,22 @@ func (w *DB) ensureSchema() error {
 	const ddl = `
 create table if not exists transactions (
   id serial primary key,
-  email_id          text     not null,
+  email_id          text          not null,
 
-  tx_date      timestamptz   not null,
-  tx_bank      text          not null,
-  tx_account   text          not null,
-  tx_amount    numeric(18,2) not null,
-  tx_currency  text          not null,
-  tx_direction text          not null,
-  tx_desc      text,
+  tx_date           timestamptz   not null,
+  tx_bank           text          not null,
+  tx_account        text          not null,
+  tx_amount         numeric(18,2) not null,
+  tx_direction      text          not null,
+  tx_desc           text,
 
-  category   text,
-  merchant   text,
-  user_notes text
+  category          text,
+  merchant          text,
+  user_notes        text,
+
+  foreign_amount    numeric(18, 2),
+  foreign_currency  text,
+  exchange_rate     numeric(18, 6)
 );
 
 create unique index if not exists idx_transactions_email_id
@@ -83,12 +86,14 @@ insert into transactions (
   tx_bank,
   tx_account,
   tx_amount,
-  tx_currency,
   tx_direction,
   tx_desc,
   category,
   merchant,
-  user_notes
+  user_notes,
+  foreign_amount,
+  foreign_currency,
+  exchange_rate
 )
 values (
   default,
@@ -97,26 +102,30 @@ values (
   :tx_bank,
   :tx_account,
   :tx_amount,
-  :tx_currency,
   :tx_direction,
   :tx_desc,
   :category,
   :merchant,
-  :user_notes
+  :user_notes,
+  :foreign_amount,
+  :foreign_currency,
+  :exchange_rate
 );`
 
 	data := map[string]any{
-		"email_id":     tx.EmailID,
-		"tx_date":      tx.TxDate,
-		"tx_bank":      tx.TxBank,
-		"tx_account":   tx.TxAccount,
-		"tx_amount":    tx.TxAmount,
-		"tx_currency":  tx.TxCurrency,
-		"tx_direction": string(tx.TxDirection),
-		"tx_desc":      tx.TxDesc,
-		"category":     tx.Category,
-		"merchant":     tx.Merchant,
-		"user_notes":   tx.UserNotes,
+		"email_id":         tx.EmailID,
+		"tx_date":          tx.TxDate,
+		"tx_bank":          tx.TxBank,
+		"tx_account":       tx.TxAccount,
+		"tx_amount":        tx.TxAmount,
+		"tx_direction":     string(tx.TxDirection),
+		"tx_desc":          tx.TxDesc,
+		"category":         tx.Category,
+		"merchant":         tx.Merchant,
+		"user_notes":       tx.UserNotes,
+		"foreign_amount":   tx.ForeignAmount,
+		"foreign_currency": tx.ForeignCurrency,
+		"exchange_rate":    tx.ExchangeRate,
 	}
 
 	_, err := w.NamedExec(q, data)

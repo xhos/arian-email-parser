@@ -17,11 +17,14 @@ type Transaction struct {
 	TxBank      string    // e.g. "rbc"
 	TxAccount   string    // e.g. "****1234"
 	TxAmount    string    // "1234.56" (to preserve exact input for NUMERIC)
-	TxCurrency  string    // e.g. "CAD"
 	TxDirection Direction // "in" or "out"
 	TxDesc      string    // raw transaction description (parsed from email)
 
 	Category  string // to be AI-assigned later
 	Merchant  string // inferred or parsed from description
 	UserNotes string // manually entered by user later
+
+	ForeignAmount   string
+	ForeignCurrency string
+	ExchangeRate    string
 }
