@@ -10,7 +10,7 @@ import (
 	"syscall"
 	"time"
 
-	"arian-parser/internal/db"
+	"arian-parser/internal/api"
 	"arian-parser/internal/ingest"
 	"arian-parser/internal/mailpit"
 
@@ -18,20 +18,25 @@ import (
 )
 
 type Config struct {
-	PostgresURL string
+	APIBaseURL  string
+	APIKey      string
 	WebhookPath string
 	ListenAddr  string
 }
 
 func loadConfig() (Config, error) {
 	cfg := Config{
-		PostgresURL: os.Getenv("POSTGRES_URL"),
+		APIBaseURL:  os.Getenv("API_BASE_URL"),
+		APIKey:      os.Getenv("API_KEY"),
 		WebhookPath: os.Getenv("ARIAN_WEBHOOK_PATH"),
 		ListenAddr:  os.Getenv("ARIAN_LISTEN_ADDR"),
 	}
 
-	if cfg.PostgresURL == "" {
-		return cfg, errors.New("POSTGRES_URL must be set")
+	if cfg.APIBaseURL == "" {
+		return cfg, errors.New("API_BASE_URL must be set")
+	}
+	if cfg.APIKey == "" {
+		return cfg, errors.New("API_KEY must be set")
 	}
 
 	// if webhook is not set, do a one-shot run
@@ -42,16 +47,12 @@ func loadConfig() (Config, error) {
 	return cfg, nil
 }
 
-func newDB(dsn string, lg *log.Logger) (*db.DB, error) {
-	lg.Info("connecting to postgres")
-	return db.New(dsn)
-}
-
-func newProcessor(mp *mailpit.Client, dbConn *db.DB, lg *log.Logger) *ingest.Processor {
+func newProcessor(mp *mailpit.Client, apiClient *api.Client, accountMap map[string]int, lg *log.Logger) *ingest.Processor {
 	return &ingest.Processor{
-		MP:  mp,
-		DB:  dbConn,
-		Log: lg.WithPrefix("proc"),
+		MP:         mp,
+		API:        apiClient,
+		AccountMap: accountMap,
+		Log:        lg.WithPrefix("proc"),
 	}
 }
 
@@ -98,13 +99,36 @@ func main() {
 		logger.Fatal("mailpit init", "err", err)
 	}
 
-	dbConn, err := newDB(cfg.PostgresURL, logger)
+	// 1. initialize the API Client
+	apiClient, err := api.NewClient()
 	if err != nil {
-		logger.Fatal("db init", "err", err)
+		logger.Fatal("api client init", "err", err)
 	}
-	defer dbConn.Close()
 
-	proc := newProcessor(mp, dbConn, logger)
+	// 2. fetch accounts and build the lookup map
+	logger.Info("fetching accounts from API to build lookup map")
+	accounts, err := apiClient.GetAccounts()
+	if err != nil {
+		logger.Fatal("could not fetch accounts from backend", "err", err)
+	}
+
+	accountMap := make(map[string]int, len(accounts))
+	logger.Info("building account map...")
+	for _, acc := range accounts {
+		if acc.Name == "" {
+			logger.Warn("skipping account with empty name", "id", acc.ID)
+			continue
+		}
+		key := fmt.Sprintf("%s-%s", acc.Bank, acc.Name)
+		accountMap[key] = acc.ID
+		logger.Info("added to map", "key", key, "id", acc.ID)
+	}
+
+	logger.Info("account map built", "count", len(accountMap))
+	logger.Info("account map contents", "map", accountMap)
+
+	// 3. initialize the Processor with new dependencies
+	proc := newProcessor(mp, apiClient, accountMap, logger)
 
 	// one-shot mode
 	if cfg.WebhookPath == "" {

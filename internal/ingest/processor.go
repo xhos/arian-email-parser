@@ -1,23 +1,21 @@
 package ingest
 
 import (
-	"arian-parser/internal/domain"
+	"arian-parser/internal/api"
 	_ "arian-parser/internal/email/all"
 	"arian-parser/internal/mailpit"
 	"arian-parser/internal/parser"
-
+	"fmt"
 	"github.com/charmbracelet/log"
+	"strings"
 )
 
-type dbWriter interface {
-	Insert(tx *domain.Transaction) error
-}
-
-// Processor glues Mailpit -> parser -> DB
+// Processor glues Mailpit -> parser -> API
 type Processor struct {
-	MP  *mailpit.Client
-	DB  dbWriter
-	Log *log.Logger
+	MP         *mailpit.Client
+	API        *api.Client
+	AccountMap map[string]int
+	Log        *log.Logger
 }
 
 // RunOnce pulls unread mails, parses, and stores them
@@ -56,9 +54,22 @@ func (p *Processor) RunOnce() error {
 			continue
 		}
 
-		p.Log.Info("insert", "id", id)
-		if err := p.DB.Insert(txn); err != nil {
-			p.Log.Error("db insert", "id", id, "err", err)
+		cleanAccount := strings.TrimLeft(txn.TxAccount, "*")
+		accountKey := fmt.Sprintf("%s-%s", txn.TxBank, cleanAccount)
+		accountID, ok := p.AccountMap[accountKey]
+		if !ok {
+			p.Log.Warn("unrecognized account; skipping",
+				"id", id,
+				"bank", txn.TxBank,
+				"account", cleanAccount)
+			continue
+		}
+
+		txn.AccountID = accountID
+
+		p.Log.Info("sending to api", "id", id, "account_id", accountID)
+		if err := p.API.CreateTransaction(txn); err != nil {
+			p.Log.Error("api create transaction failed", "id", id, "err", err)
 		}
 	}
 

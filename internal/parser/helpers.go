@@ -33,7 +33,8 @@ func ParseEmailDate(raw string) (time.Time, error) {
 func BuildTransaction(
 	m EmailMeta,
 	fields map[string]string,
-	bank, currency string,
+	bank string,
+	currency string,
 	dir domain.Direction,
 	desc string,
 ) (*domain.Transaction, error) {
@@ -68,6 +69,7 @@ func BuildTransaction(
 		TxBank:          bank,
 		TxAccount:       fields["account"],
 		TxAmount:        amt,
+		TxCurrency:      currency,
 		TxDirection:     dir,
 		TxDesc:          desc,
 		Category:        "",

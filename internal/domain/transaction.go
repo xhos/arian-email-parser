@@ -10,8 +10,9 @@ const (
 )
 
 type Transaction struct {
-	ID      string // serial primary key (ignored on insert)
-	EmailID string // message ID from Mailpit or similar
+	ID        string // serial primary key (ignored on insert)
+	EmailID   string // message ID from Mailpit or similar
+	AccountID int    // Will be populated from the accountMap before sending to API
 
 	TxDate      time.Time // date extracted from email body
 	TxBank      string    // e.g. "rbc"
@@ -19,6 +20,7 @@ type Transaction struct {
 	TxAmount    float64
 	TxDirection Direction // "in" or "out"
 	TxDesc      string    // raw transaction description (parsed from email)
+	TxCurrency  string    // e.g. "CAD"
 
 	Category  string // to be AI-assigned later
 	Merchant  string // inferred or parsed from description
