@@ -28,8 +28,8 @@ func loadConfig() (Config, error) {
 	cfg := Config{
 		APIBaseURL:  os.Getenv("API_BASE_URL"),
 		APIKey:      os.Getenv("API_KEY"),
-		WebhookPath: os.Getenv("ARIAN_WEBHOOK_PATH"),
-		ListenAddr:  os.Getenv("ARIAN_LISTEN_ADDR"),
+		WebhookPath: os.Getenv("PARSER_WEBHOOK_PATH"),
+		ListenAddr:  os.Getenv("PARSER_LISTEN_ADDR"),
 	}
 
 	if cfg.APIBaseURL == "" {
@@ -41,7 +41,7 @@ func loadConfig() (Config, error) {
 
 	// if webhook is not set, do a one-shot run
 	if (cfg.WebhookPath == "") != (cfg.ListenAddr == "") {
-		return cfg, errors.New("ARIAN_WEBHOOK_PATH and ARIAN_LISTEN_ADDR must both be set or both be empty")
+		return cfg, errors.New("PARSER_WEBHOOK_PATH and PARSER_LISTEN_ADDR must both be set or both be empty")
 	}
 
 	return cfg, nil
