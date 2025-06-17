@@ -48,7 +48,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           tags: |
             # Create a 'latest' tag on pushes to the main branch
-            type=raw,value=latest,enable={{isDefaultBranch}}
+            type=raw,value=latest,enable=${{ github.ref_name == github.event.repository.default_branch }}
             # Create a tag with the git sha
             type=sha
             # Create a semver tag (e.g., v1.2.3) when a tag is pushed
