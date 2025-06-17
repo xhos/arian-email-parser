@@ -9,7 +9,7 @@ on:
   workflow_dispatch: # allows manual trigger from GitHub UI
 
 env:
-  IMAGE_NAME: arian # your image name
+  IMAGE_NAME: arian-parser # your image name
   REGISTRY: ghcr.io
   GO_VERSION: 1.21
 
