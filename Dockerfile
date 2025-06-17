@@ -1,4 +1,6 @@
-FROM golang:alpine AS builder
+FROM golang:tip-alpine AS builder
+
+RUN apk --no-cache add git
 
 WORKDIR /app
 
@@ -7,11 +9,10 @@ RUN go mod download
 
 COPY . .
 
-RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o arian-parser ./cmd/
+RUN CGO_ENABLED=0 go build -trimpath -ldflags="-s -w" -o /app/arian-parser ./cmd/main.go
 
-FROM gcr.io/distroless/base-debian11:latest
+FROM alpine:latest
 
-WORKDIR /app
-COPY --from=curlimages/curl:latest /usr/bin/curl /usr/bin/curl
+RUN apk --no-cache add curl ca-certificates
 COPY --from=builder /app/arian-parser /app/arian-parser
 ENTRYPOINT ["/app/arian-parser"]
