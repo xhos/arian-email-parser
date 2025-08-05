@@ -18,7 +18,8 @@ import (
 )
 
 type Config struct {
-	APIBaseURL  string
+	AriandURL   string
+	UserID      string
 	APIKey      string
 	WebhookPath string
 	ListenAddr  string
@@ -26,14 +27,18 @@ type Config struct {
 
 func loadConfig() (Config, error) {
 	cfg := Config{
-		APIBaseURL:  os.Getenv("API_BASE_URL"),
+		AriandURL:   os.Getenv("ARIAND_URL"),
+		UserID:      os.Getenv("USER_ID"),
 		APIKey:      os.Getenv("API_KEY"),
 		WebhookPath: os.Getenv("PARSER_WEBHOOK_PATH"),
 		ListenAddr:  os.Getenv("PARSER_LISTEN_ADDR"),
 	}
 
-	if cfg.APIBaseURL == "" {
-		return cfg, errors.New("API_BASE_URL must be set")
+	if cfg.AriandURL == "" {
+		return cfg, errors.New("ARIAND_URL must be set")
+	}
+	if cfg.UserID == "" {
+		return cfg, errors.New("USER_ID must be set")
 	}
 	if cfg.APIKey == "" {
 		return cfg, errors.New("API_KEY must be set")
@@ -100,10 +105,15 @@ func main() {
 	}
 
 	// 1. initialize the API Client
-	apiClient, err := api.NewClient()
+	apiClient, err := api.NewClient(cfg.AriandURL, cfg.UserID, cfg.APIKey)
 	if err != nil {
 		logger.Fatal("api client init", "err", err)
 	}
+	defer func() {
+		if err := apiClient.Close(); err != nil {
+			logger.Error("failed to close gRPC connection", "err", err)
+		}
+	}()
 
 	// 2. fetch accounts and build the lookup map
 	logger.Info("fetching accounts from API to build lookup map")
@@ -116,12 +126,12 @@ func main() {
 	logger.Info("building account map...")
 	for _, acc := range accounts {
 		if acc.Name == "" {
-			logger.Warn("skipping account with empty name", "id", acc.ID)
+			logger.Warn("skipping account with empty name", "id", acc.Id)
 			continue
 		}
 		key := fmt.Sprintf("%s-%s", acc.Bank, acc.Name)
-		accountMap[key] = acc.ID
-		logger.Info("added to map", "key", key, "id", acc.ID)
+		accountMap[key] = int(acc.Id)
+		logger.Info("added to map", "key", key, "id", acc.Id)
 	}
 
 	logger.Info("account map built", "count", len(accountMap))
