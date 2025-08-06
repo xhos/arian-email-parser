@@ -39,9 +39,13 @@ func BuildTransaction(
 	desc string,
 ) (*domain.Transaction, error) {
 
-	recv, err := time.Parse(time.RFC3339, m.Date)
-	if err != nil {
-		return nil, err
+	recv := time.Now()
+	if m.Date != "" {
+		if parsed, err := time.Parse(time.RFC3339, m.Date); err == nil {
+			recv = parsed
+		} else if parsed, err := time.Parse("Mon, 2 Jan 2006 15:04:05 -0700", m.Date); err == nil {
+			recv = parsed
+		}
 	}
 
 	bodyDate, err := ParseEmailDate(fields["txdate"])
