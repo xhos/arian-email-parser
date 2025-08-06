@@ -22,12 +22,12 @@ type Client struct {
 	conn          *grpc.ClientConn
 	accountClient pb.AccountServiceClient
 	txClient      pb.TransactionServiceClient
-	userID        string
+	userClient    pb.UserServiceClient
 	authToken     string
 	log           *log.Logger
 }
 
-func NewClient(ariandURL, userID, authToken string) (*Client, error) {
+func NewClient(ariandURL, _, authToken string) (*Client, error) {
 	conn, err := grpc.NewClient(ariandURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to gRPC server: %w", err)
@@ -37,7 +37,7 @@ func NewClient(ariandURL, userID, authToken string) (*Client, error) {
 		conn:          conn,
 		accountClient: pb.NewAccountServiceClient(conn),
 		txClient:      pb.NewTransactionServiceClient(conn),
-		userID:        userID,
+		userClient:    pb.NewUserServiceClient(conn),
 		authToken:     authToken,
 		log:           log.NewWithOptions(os.Stderr, log.Options{Prefix: "grpc-client"}),
 	}, nil
@@ -47,11 +47,28 @@ func (c *Client) Close() error {
 	return c.conn.Close()
 }
 
-func (c *Client) GetAccounts() ([]*pb.Account, error) {
+// GetUser retrieves a user by UUID
+func (c *Client) GetUser(userUUID string) (*pb.User, error) {
+	ctx := c.withAuth(context.Background())
+
+	req := &pb.GetUserRequest{
+		Id: userUUID,
+	}
+
+	resp, err := c.userClient.GetUser(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get user: %w", err)
+	}
+
+	c.log.Info("successfully fetched user", "user_id", userUUID)
+	return resp.User, nil
+}
+
+func (c *Client) GetAccounts(userID string) ([]*pb.Account, error) {
 	ctx := c.withAuth(context.Background())
 
 	req := &pb.ListAccountsRequest{
-		UserId: c.userID,
+		UserId: userID,
 	}
 
 	resp, err := c.accountClient.ListAccounts(ctx, req)
@@ -63,12 +80,12 @@ func (c *Client) GetAccounts() ([]*pb.Account, error) {
 	return resp.Accounts, nil
 }
 
-func (c *Client) CreateTransaction(tx *domain.Transaction) error {
+func (c *Client) CreateTransaction(userID string, tx *domain.Transaction) error {
 	ctx := c.withAuth(context.Background())
 
 	// convert domain transaction to gRPC request
 	req := &pb.CreateTransactionRequest{
-		UserId:    c.userID,
+		UserId:    userID,
 		AccountId: int64(tx.AccountID),
 		TxDate:    timestamppb.New(tx.TxDate),
 		TxAmount: &money.Money{
