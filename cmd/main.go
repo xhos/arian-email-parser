@@ -3,6 +3,7 @@ package main
 import (
 	"context"
 	"errors"
+	"flag"
 	"fmt"
 	"net/http"
 	"os"
@@ -12,6 +13,7 @@ import (
 
 	"arian-parser/internal/api"
 	"arian-parser/internal/smtp"
+	"arian-parser/internal/version"
 
 	"github.com/charmbracelet/log"
 )
@@ -58,8 +60,9 @@ func getEnvDefault(key, defaultValue string) string {
 func newHTTPServer(addr string, _ *log.Logger) *http.Server {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Content-Type", "application/json")
 		w.WriteHeader(http.StatusOK)
-		fmt.Fprintln(w, "ok")
+		fmt.Fprintf(w, `{"status":"ok","version":"%s"}`, version.Version())
 	})
 
 	return &http.Server{
@@ -72,7 +75,27 @@ func newHTTPServer(addr string, _ *log.Logger) *http.Server {
 }
 
 func main() {
+	var showVersion = flag.Bool("version", false, "show version information")
+	var showVersionFull = flag.Bool("version-full", false, "show full version information with build details")
+	flag.Parse()
+
+	if *showVersion {
+		fmt.Println(version.Version())
+		return
+	}
+	if *showVersionFull {
+		fmt.Println(version.FullVersion())
+		return
+	}
+
 	logger := log.NewWithOptions(os.Stdout, log.Options{Prefix: "arian"})
+	logger.Info("starting application",
+		"app", version.RepoName,
+		"version", version.Version(),
+		"commit", version.GitCommit,
+		"branch", version.GitBranch,
+		"built", version.BuildTime,
+		"repo", version.RepoURL)
 
 	cfg, err := loadConfig()
 	if err != nil {

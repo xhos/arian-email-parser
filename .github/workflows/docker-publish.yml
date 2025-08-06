@@ -39,6 +39,16 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: get version info
+        id: version
+        run: |
+          VERSION=$(grep -E "Major|Minor|Patch" internal/version/version.go | grep -E "= [0-9]+" | cut -d'=' -f2 | tr -d ' ' | tr '\n' '.' | sed 's/.$//')
+          echo "version=v${VERSION}" >> $GITHUB_OUTPUT
+          echo "build_time=$(date -u '+%Y-%m-%d_%H:%M:%S')" >> $GITHUB_OUTPUT
+          echo "git_commit=${GITHUB_SHA}" >> $GITHUB_OUTPUT
+          echo "git_branch=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          echo "Version: v${VERSION}"
+
       - name: extract docker metadata
         id: meta
         uses: docker/metadata-action@v5
@@ -46,6 +56,7 @@ jobs:
           images: ${{ env.REGISTRY }}/${{ github.repository_owner }}/${{ env.IMAGE_NAME }}
           tags: |
             type=raw,value=latest,enable=${{ github.ref_name == github.event.repository.default_branch }}
+            type=raw,value=${{ steps.version.outputs.version }}
             type=sha
             type=ref,event=tag
 
@@ -60,5 +71,10 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          build-args: |
+            VERSION=${{ steps.version.outputs.version }}
+            BUILD_TIME=${{ steps.version.outputs.build_time }}
+            GIT_COMMIT=${{ steps.version.outputs.git_commit }}
+            GIT_BRANCH=${{ steps.version.outputs.git_branch }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
