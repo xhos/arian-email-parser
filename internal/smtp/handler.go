@@ -5,7 +5,10 @@ import (
 	_ "arian-parser/internal/email/all"
 	"arian-parser/internal/parser"
 	"fmt"
+	"os"
+	"path/filepath"
 	"strings"
+	"time"
 
 	"github.com/charmbracelet/log"
 )
@@ -27,15 +30,28 @@ func NewEmailHandler(apiClient *api.Client, log *log.Logger) *EmailHandler {
 func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, data []byte) error {
 	h.Log.Info("processing email", "user_uuid", userUUID, "from", from)
 
-	// validate user exists
-	user, err := h.API.GetUser(userUUID)
-	if err != nil {
-		h.Log.Error("user not found", "user_uuid", userUUID, "err", err)
-		return fmt.Errorf("user %s not found: %w", userUUID, err)
+	// save email to file if DEBUG is enabled
+	if os.Getenv("DEBUG") != "" {
+		if err := h.saveEmailToFile(userUUID, from, data); err != nil {
+			h.Log.Warn("failed to save debug email file", "err", err)
+		}
 	}
 
-	userID := user.Id
-	h.Log.Info("found user", "user_uuid", userUUID, "user_id", userID)
+	var userID string = "1" // default for debug mode
+
+	// skip ARIAND connection in debug mode
+	if os.Getenv("DEBUG") == "" {
+		// validate user exists
+		user, err := h.API.GetUser(userUUID)
+		if err != nil {
+			h.Log.Error("user not found", "user_uuid", userUUID, "err", err)
+			return fmt.Errorf("user %s not found: %w", userUUID, err)
+		}
+		userID = fmt.Sprintf("%s", user.Id)
+		h.Log.Info("found user", "user_uuid", userUUID, "user_id", userID)
+	} else {
+		h.Log.Info("debug mode: skipping user validation", "user_uuid", userUUID)
+	}
 
 	// parse email into metadata
 	meta, err := parser.ToEmailMeta(fmt.Sprintf("%s-%d", userUUID, len(data)), data)
@@ -58,6 +74,21 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 		return err
 	}
 	if txn == nil {
+		return nil
+	}
+
+	// in debug mode, just log the parsed transaction
+	if os.Getenv("DEBUG") != "" {
+		h.Log.Info("parsed transaction (debug mode)",
+			"user_uuid", userUUID,
+			"email_id", txn.EmailID,
+			"tx_date", txn.TxDate,
+			"bank", txn.TxBank,
+			"account", txn.TxAccount,
+			"amount", txn.TxAmount,
+			"currency", txn.TxCurrency,
+			"direction", txn.TxDirection,
+			"description", txn.TxDesc)
 		return nil
 	}
 
@@ -100,4 +131,23 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 		"description", txn.TxDesc)
 
 	return h.API.CreateTransaction(userID, txn)
+}
+
+// saveEmailToFile saves email content to debug directory when DEBUG env var is set
+func (h *EmailHandler) saveEmailToFile(userUUID, from string, data []byte) error {
+	debugDir := "debug_emails"
+	if err := os.MkdirAll(debugDir, 0755); err != nil {
+		return fmt.Errorf("failed to create debug directory: %w", err)
+	}
+
+	timestamp := time.Now().Format("20060102-150405")
+	filename := fmt.Sprintf("%s_%s_%s.eml", userUUID, timestamp, strings.ReplaceAll(from, "@", "_at_"))
+	filePath := filepath.Join(debugDir, filename)
+
+	if err := os.WriteFile(filePath, data, 0644); err != nil {
+		return fmt.Errorf("failed to write debug email file: %w", err)
+	}
+
+	h.Log.Info("saved debug email file", "path", filePath, "size", len(data))
+	return nil
 }

@@ -35,11 +35,14 @@ func loadConfig() (Config, error) {
 		TLSKey:     os.Getenv("TLS_KEY"),
 	}
 
-	if cfg.AriandURL == "" {
-		return cfg, errors.New("ARIAND_URL must be set")
-	}
-	if cfg.APIKey == "" {
-		return cfg, errors.New("API_KEY must be set")
+	// in debug mode, ARIAND_URL and API_KEY are optional
+	if os.Getenv("DEBUG") == "" {
+		if cfg.AriandURL == "" {
+			return cfg, errors.New("ARIAND_URL must be set")
+		}
+		if cfg.APIKey == "" {
+			return cfg, errors.New("API_KEY must be set")
+		}
 	}
 
 	return cfg, nil
@@ -76,16 +79,21 @@ func main() {
 		logger.Fatal("config error", "err", err)
 	}
 
-	// 1. initialize the API Client
-	apiClient, err := api.NewClient(cfg.AriandURL, "", cfg.APIKey)
-	if err != nil {
-		logger.Fatal("api client init", "err", err)
-	}
-	defer func() {
-		if err := apiClient.Close(); err != nil {
-			logger.Error("failed to close gRPC connection", "err", err)
+	// 1. initialize the API Client (skip in debug mode)
+	var apiClient *api.Client
+	if os.Getenv("DEBUG") == "" {
+		apiClient, err = api.NewClient(cfg.AriandURL, "", cfg.APIKey)
+		if err != nil {
+			logger.Fatal("api client init", "err", err)
 		}
-	}()
+		defer func() {
+			if err := apiClient.Close(); err != nil {
+				logger.Error("failed to close gRPC connection", "err", err)
+			}
+		}()
+	} else {
+		logger.Info("debug mode: skipping API client initialization")
+	}
 
 	// 2. initialize the email handler and smtp server
 	handler := smtp.NewEmailHandler(apiClient, logger)
