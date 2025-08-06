@@ -2,7 +2,7 @@ package parser
 
 import (
 	"arian-parser/internal/domain"
-	"encoding/json"
+	"strings"
 )
 
 // EmailMeta holds the minimal fields needed to pick and parse a message
@@ -19,20 +19,39 @@ type Parser interface {
 	Parse(meta EmailMeta) (*domain.Transaction, error)
 }
 
-// ToEmailMeta unmarshals the raw JSON from Mailpit into EmailMeta
-func ToEmailMeta(id string, raw []byte) (EmailMeta, error) {
-	var m struct {
-		Subject string `json:"Subject"`
-		Text    string `json:"Text"`
-		Date    string `json:"Date"`
-	}
-	if err := json.Unmarshal(raw, &m); err != nil {
-		return EmailMeta{}, err
-	}
+// ToEmailMeta creates EmailMeta from decoded email content
+func ToEmailMeta(id string, decodedContent string) (EmailMeta, error) {
+	// Extract subject from email headers in the decoded content
+	subject := extractSubject(decodedContent)
+	// Extract date from email headers
+	date := extractDate(decodedContent)
+
 	return EmailMeta{
 		ID:      id,
-		Subject: m.Subject,
-		Text:    m.Text,
-		Date:    m.Date,
+		Subject: subject,
+		Text:    decodedContent,
+		Date:    date,
 	}, nil
+}
+
+// extractSubject finds the Subject header in decoded email content
+func extractSubject(content string) string {
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		if strings.HasPrefix(line, "Subject:") {
+			return strings.TrimSpace(strings.TrimPrefix(line, "Subject:"))
+		}
+	}
+	return ""
+}
+
+// extractDate finds the Date header in decoded email content
+func extractDate(content string) string {
+	lines := strings.Split(content, "\n")
+	for _, line := range lines {
+		if strings.HasPrefix(line, "Date:") {
+			return strings.TrimSpace(strings.TrimPrefix(line, "Date:"))
+		}
+	}
+	return ""
 }

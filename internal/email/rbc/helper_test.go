@@ -33,7 +33,7 @@ func assertTransaction(
 		t.Fatalf("failed to read fixture %s: %v", fixturePath, err)
 	}
 
-	meta, err := parser.ToEmailMeta(emailID, rawBytes)
+	meta, err := parser.ToEmailMeta(emailID, string(rawBytes))
 	if err != nil {
 		t.Fatalf("toEmailMeta failed for %s: %v", fixturePath, err)
 	}

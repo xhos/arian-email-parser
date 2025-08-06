@@ -2,6 +2,7 @@ package smtp
 
 import (
 	"arian-parser/internal/api"
+	"arian-parser/internal/email"
 	_ "arian-parser/internal/email/all"
 	"arian-parser/internal/parser"
 	"fmt"
@@ -47,14 +48,26 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 			h.Log.Error("user not found", "user_uuid", userUUID, "err", err)
 			return fmt.Errorf("user %s not found: %w", userUUID, err)
 		}
-		userID = fmt.Sprintf("%s", user.Id)
+		userID = user.Id
 		h.Log.Info("found user", "user_uuid", userUUID, "user_id", userID)
 	} else {
 		h.Log.Info("debug mode: skipping user validation", "user_uuid", userUUID)
 	}
 
+	// decode raw email content
+	decodedContent, err := email.DecodeEmailContent(data)
+	if err != nil {
+		h.Log.Error("failed to decode email content", "err", err)
+		return err
+	}
+
+	// save decoded content if DEBUG is enabled
+	if os.Getenv("DEBUG") != "" {
+		h.Log.Info("decoded email content", "content", decodedContent)
+	}
+
 	// parse email into metadata
-	meta, err := parser.ToEmailMeta(fmt.Sprintf("%s-%d", userUUID, len(data)), data)
+	meta, err := parser.ToEmailMeta(fmt.Sprintf("%s-%d", userUUID, len(data)), decodedContent)
 	if err != nil {
 		h.Log.Error("failed to parse email metadata", "err", err)
 		return err
