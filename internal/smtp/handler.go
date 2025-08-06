@@ -36,6 +36,12 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 		if err := h.saveEmailToFile(userUUID, from, data); err != nil {
 			h.Log.Warn("failed to save debug email file", "err", err)
 		}
+		// Log first 200 characters of raw email for debugging
+		preview := string(data)
+		if len(preview) > 200 {
+			preview = preview[:200] + "..."
+		}
+		h.Log.Info("raw email preview", "preview", preview)
 	}
 
 	var userID string = "1" // default for debug mode
@@ -58,7 +64,8 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 	decodedContent, err := email.DecodeEmailContent(data)
 	if err != nil {
 		h.Log.Error("failed to decode email content", "err", err)
-		return err
+		// Return nil to accept the email and prevent retries - this is our parsing issue, not sender's
+		return nil
 	}
 
 	// save decoded content if DEBUG is enabled
@@ -70,7 +77,8 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 	meta, err := parser.ToEmailMeta(fmt.Sprintf("%s-%d", userUUID, len(data)), decodedContent)
 	if err != nil {
 		h.Log.Error("failed to parse email metadata", "err", err)
-		return err
+		// Return nil to accept the email and prevent retries - this is our parsing issue, not sender's
+		return nil
 	}
 
 	// find appropriate parser
