@@ -161,14 +161,62 @@ func (h *EmailHandler) saveEmailToFile(userUUID, from string, data []byte) error
 		return fmt.Errorf("failed to create debug directory: %w", err)
 	}
 
+	decodedContent, err := email.DecodeEmailContent(data)
+	if err != nil {
+		h.Log.Warn("failed to decode email for debug file, saving raw", "err", err)
+		timestamp := time.Now().Format("20060102-150405")
+		filename := fmt.Sprintf("%s_%s_%s.eml", userUUID, timestamp, strings.ReplaceAll(from, "@", "_at_"))
+		filePath := filepath.Join(debugDir, filename)
+
+		if err := os.WriteFile(filePath, data, 0644); err != nil {
+			return fmt.Errorf("failed to write debug email file: %w", err)
+		}
+		h.Log.Info("saved raw debug email file", "path", filePath, "size", len(data))
+		return nil
+	}
+
+	subject := extractSubjectFromContent(decodedContent)
+	sanitizedSubject := sanitizeFilename(subject)
+
 	timestamp := time.Now().Format("20060102-150405")
-	filename := fmt.Sprintf("%s_%s_%s.eml", userUUID, timestamp, strings.ReplaceAll(from, "@", "_at_"))
+	filename := fmt.Sprintf("%s_%s_%s_%s.txt", userUUID, timestamp, sanitizedSubject, strings.ReplaceAll(from, "@", "_at_"))
 	filePath := filepath.Join(debugDir, filename)
 
-	if err := os.WriteFile(filePath, data, 0644); err != nil {
+	if err := os.WriteFile(filePath, []byte(decodedContent), 0644); err != nil {
 		return fmt.Errorf("failed to write debug email file: %w", err)
 	}
 
-	h.Log.Info("saved debug email file", "path", filePath, "size", len(data))
+	h.Log.Info("saved decoded debug email file", "path", filePath, "size", len(decodedContent), "subject", subject)
 	return nil
+}
+
+// extractSubjectFromContent extracts subject line from decoded email content
+func extractSubjectFromContent(content string) string {
+	for line := range strings.SplitSeq(content, "\n") {
+		if subject, found := strings.CutPrefix(line, "Subject:"); found {
+			return strings.TrimSpace(subject)
+		}
+	}
+	return "no-subject"
+}
+
+// sanitizeFilename removes invalid characters from subject for use in filename
+func sanitizeFilename(subject string) string {
+	invalid := []string{"/", "\\", ":", "*", "?", "\"", "<", ">", "|", " "}
+	sanitized := subject
+	for _, char := range invalid {
+		sanitized = strings.ReplaceAll(sanitized, char, "_")
+	}
+
+	if len(sanitized) > 50 {
+		sanitized = sanitized[:50]
+	}
+
+	sanitized = strings.TrimRight(sanitized, "_")
+
+	if sanitized == "" {
+		return "no-subject"
+	}
+
+	return sanitized
 }
