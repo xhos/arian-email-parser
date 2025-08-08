@@ -1,0 +1,72 @@
+# Git files
+.git
+.gitignore
+.gitmodules
+
+*.md
+LICENSE
+/proto
+
+# Development files
+.env
+.env.*
+*.env.local
+.envrc
+devenv.nix
+devenv.yaml
+devenv.lock
+.devenv
+.direnv
+
+# Docker files
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Build artifacts
+/arian-parser
+/bin
+/dist
+/build
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Test files
+*_test.go
+*.test
+/coverage
+*.out
+*.prof
+*.test.json
+
+# IDE files
+.idea
+.vscode
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.log
+
+# Go specific
+vendor/
+go.work
+go.work.sum
+
+# Certificates (mounted at runtime)
+*.pem
+*.key
+*.crt
+*.cer
+certs/
+
+# Backup files
+*.bak
+*.backup
