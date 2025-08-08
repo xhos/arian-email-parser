@@ -36,12 +36,6 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 		if err := h.saveEmailToFile(userUUID, from, data); err != nil {
 			h.Log.Warn("failed to save debug email file", "err", err)
 		}
-		// Log first 200 characters of raw email for debugging
-		preview := string(data)
-		if len(preview) > 200 {
-			preview = preview[:200] + "..."
-		}
-		h.Log.Info("raw email preview", "preview", preview)
 	}
 
 	var userID string = "1" // default for debug mode
@@ -66,11 +60,6 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 		h.Log.Error("failed to decode email content", "err", err)
 		// Return nil to accept the email and prevent retries - this is our parsing issue, not sender's
 		return nil
-	}
-
-	// save decoded content if DEBUG is enabled
-	if os.Getenv("DEBUG") != "" {
-		h.Log.Info("decoded email content", "content", decodedContent)
 	}
 
 	// parse email into metadata
@@ -136,11 +125,27 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 
 	accountID, ok := accountMap[accountKey]
 	if !ok {
-		h.Log.Warn("unrecognized account; skipping",
-			"user_uuid", userUUID,
-			"bank", txn.TxBank,
-			"account", cleanAccount)
-		return nil
+		// try to use user's default account if available
+		user, err := h.API.GetUser(userUUID)
+		if err != nil {
+			h.Log.Error("failed to get user for default account", "err", err)
+			return err
+		}
+
+		if user.GetDefaultAccountId() > 0 {
+			accountID = int(user.GetDefaultAccountId())
+			h.Log.Info("using default account for unrecognized account",
+				"user_uuid", userUUID,
+				"bank", txn.TxBank,
+				"account", cleanAccount,
+				"default_account_id", accountID)
+		} else {
+			h.Log.Warn("unrecognized account and no default account set; skipping",
+				"user_uuid", userUUID,
+				"bank", txn.TxBank,
+				"account", cleanAccount)
+			return nil
+		}
 	}
 
 	txn.AccountID = accountID

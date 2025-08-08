@@ -26,6 +26,11 @@ FROM alpine:latest
 RUN apk --no-cache add curl ca-certificates tzdata && \
     adduser -D -s /bin/sh arian
 
+# Install grpc_health_probe
+RUN apk --no-cache add curl ca-certificates && \
+    curl -L https://github.com/grpc-ecosystem/grpc-health-probe/releases/download/v0.4.39/grpc_health_probe-linux-amd64 -o /usr/local/bin/grpc_health_probe && \
+    chmod +x /usr/local/bin/grpc_health_probe
+
 # create directories for certificates
 RUN mkdir -p /certs && chown arian:arian /certs
 
@@ -35,10 +40,6 @@ RUN chmod +x /app/arian-parser
 # switch to non-root user
 USER arian
 
-# expose standard SMTP ports
-EXPOSE 25 587 2525
-
-# health check endpoint
-EXPOSE 8080
+EXPOSE 25 50053
 
 ENTRYPOINT ["/app/arian-parser"]

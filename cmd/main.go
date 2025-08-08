@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"arian-parser/internal/api"
+	"arian-parser/internal/grpc"
 	"arian-parser/internal/smtp"
 	"arian-parser/internal/version"
 
@@ -25,6 +26,7 @@ type Config struct {
 	SMTPDomain string
 	TLSCert    string
 	TLSKey     string
+	GRPCAddr   string
 }
 
 func loadConfig() (Config, error) {
@@ -35,6 +37,7 @@ func loadConfig() (Config, error) {
 		SMTPDomain: getEnvDefault("SMTP_DOMAIN", "localhost"),
 		TLSCert:    os.Getenv("TLS_CERT"),
 		TLSKey:     os.Getenv("TLS_KEY"),
+		GRPCAddr:   getEnvDefault("GRPC_ADDR", ":50052"),
 	}
 
 	// in debug mode, ARIAND_URL and API_KEY are optional
@@ -137,6 +140,18 @@ func main() {
 		}
 	}()
 
+	// gRPC health server
+	grpcHealthSrv, err := grpc.NewHealthServer(cfg.GRPCAddr)
+	if err != nil {
+		logger.Fatal("grpc health server init", "err", err)
+	}
+	go func() {
+		logger.Info("grpc health server starting", "addr", cfg.GRPCAddr)
+		if err := grpcHealthSrv.Start(); err != nil {
+			logger.Error("grpc health server error", "err", err)
+		}
+	}()
+
 	ctx, cancel := context.WithCancel(context.Background())
 	defer cancel()
 
@@ -158,4 +173,5 @@ func main() {
 	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer shutdownCancel()
 	_ = httpSrv.Shutdown(shutdownCtx)
+	grpcHealthSrv.Stop()
 }
