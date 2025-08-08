@@ -5,11 +5,9 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
-	"time"
 
 	"arian-parser/internal/api"
 	"arian-parser/internal/grpc"
@@ -58,23 +56,6 @@ func getEnvDefault(key, defaultValue string) string {
 		return value
 	}
 	return defaultValue
-}
-
-func newHTTPServer(addr string, _ *log.Logger) *http.Server {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/healthz", func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		w.WriteHeader(http.StatusOK)
-		fmt.Fprintf(w, `{"status":"ok","version":"%s"}`, version.Version())
-	})
-
-	return &http.Server{
-		Addr:              addr,
-		Handler:           mux,
-		ReadHeaderTimeout: 5 * time.Second,
-		IdleTimeout:       30 * time.Second,
-		ErrorLog:          log.NewWithOptions(os.Stderr, log.Options{Prefix: "http "}).StandardLog(),
-	}
 }
 
 func main() {
@@ -130,16 +111,6 @@ func main() {
 		smtpServer = smtpServer.WithTLS(cfg.TLSCert, cfg.TLSKey)
 	}
 
-	// optional http server for health checks
-	httpAddr := getEnvDefault("HTTP_ADDR", ":8080")
-	httpSrv := newHTTPServer(httpAddr, logger)
-	go func() {
-		logger.Info("http server starting", "addr", httpAddr)
-		if err := httpSrv.ListenAndServe(); !errors.Is(err, http.ErrServerClosed) {
-			logger.Error("http server error", "err", err)
-		}
-	}()
-
 	// gRPC health server
 	grpcHealthSrv, err := grpc.NewHealthServer(cfg.GRPCAddr)
 	if err != nil {
@@ -170,8 +141,5 @@ func main() {
 
 	cancel()
 
-	shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
-	defer shutdownCancel()
-	_ = httpSrv.Shutdown(shutdownCtx)
 	grpcHealthSrv.Stop()
 }
