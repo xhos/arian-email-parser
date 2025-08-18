@@ -8,3 +8,4 @@ devenv.local.nix
 cfg/
 .idea
 *.sh
+*.pem

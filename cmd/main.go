@@ -2,9 +2,7 @@ package main
 
 import (
 	"context"
-	"errors"
 	"flag"
-	"fmt"
 	"os"
 	"os/signal"
 	"syscall"
@@ -18,61 +16,68 @@ import (
 )
 
 type Config struct {
-	AriandURL  string
-	APIKey     string
-	SMTPAddr   string
-	SMTPDomain string
-	TLSCert    string
-	TLSKey     string
-	GRPCAddr   string
+	AriandURL string
+	APIKey    string
+	SMTPAddr  string
+	Domain    string
+	TLSCert   string
+	TLSKey    string
+	GRPCAddr  string
 }
 
-func loadConfig() (Config, error) {
-	cfg := Config{
-		AriandURL:  os.Getenv("ARIAND_URL"),
-		APIKey:     os.Getenv("API_KEY"),
-		SMTPAddr:   getEnvDefault("SMTP_ADDR", ":2525"),
-		SMTPDomain: getEnvDefault("SMTP_DOMAIN", "localhost"),
-		TLSCert:    os.Getenv("TLS_CERT"),
-		TLSKey:     os.Getenv("TLS_KEY"),
-		GRPCAddr:   getEnvDefault("GRPC_ADDR", ":50052"),
+func loadConfig(smtpAddr, grpcAddr string) Config {
+	apiKey := os.Getenv("API_KEY")
+	if apiKey == "" {
+		panic("API_KEY environment variable is required")
 	}
 
-	// in debug mode, ARIAND_URL and API_KEY are optional
-	if os.Getenv("DEBUG") == "" {
-		if cfg.AriandURL == "" {
-			return cfg, errors.New("ARIAND_URL must be set")
-		}
-		if cfg.APIKey == "" {
-			return cfg, errors.New("API_KEY must be set")
-		}
+	ariandURL := os.Getenv("ARIAND_URL")
+	if ariandURL == "" {
+		panic("ARIAND_URL environment variable is required")
 	}
 
-	return cfg, nil
+	domain := os.Getenv("DOMAIN")
+	if domain == "" {
+		panic("DOMAIN environment variable is required")
+	}
+
+	return Config{
+		AriandURL: ariandURL,
+		APIKey:    apiKey,
+		SMTPAddr:  smtpAddr,
+		Domain:    domain,
+		TLSCert:   os.Getenv("TLS_CERT"),
+		TLSKey:    os.Getenv("TLS_KEY"),
+		GRPCAddr:  grpcAddr,
+	}
 }
 
-func getEnvDefault(key, defaultValue string) string {
-	if value := os.Getenv(key); value != "" {
-		return value
+func parseLogLevel(level string) log.Level {
+	switch level {
+	case "debug":
+		return log.DebugLevel
+	case "info":
+		return log.InfoLevel
+	case "warn":
+		return log.WarnLevel
+	case "error":
+		return log.ErrorLevel
+	default:
+		return log.InfoLevel
 	}
-	return defaultValue
 }
 
 func main() {
-	var showVersion = flag.Bool("version", false, "show version information")
-	var showVersionFull = flag.Bool("version-full", false, "show full version information with build details")
+	smtpPort := flag.String("smtp-port", "2525", "SMTP server port")
+	grpcPort := flag.String("port", "50052", "gRPC health server port")
 	flag.Parse()
 
-	if *showVersion {
-		fmt.Println(version.Version())
-		return
-	}
-	if *showVersionFull {
-		fmt.Println(version.FullVersion())
-		return
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "" {
+		logLevel = "info"
 	}
 
-	logger := log.NewWithOptions(os.Stdout, log.Options{Prefix: "arian"})
+	logger := log.NewWithOptions(os.Stdout, log.Options{Prefix: "arian", Level: parseLogLevel(logLevel)})
 	logger.Info("starting application",
 		"app", version.RepoName,
 		"version", version.Version(),
@@ -81,14 +86,12 @@ func main() {
 		"built", version.BuildTime,
 		"repo", version.RepoURL)
 
-	cfg, err := loadConfig()
-	if err != nil {
-		logger.Fatal("config error", "err", err)
-	}
+	cfg := loadConfig(":"+*smtpPort, ":"+*grpcPort)
 
 	// 1. initialize the API Client (skip in debug mode)
 	var apiClient *api.Client
 	if os.Getenv("DEBUG") == "" {
+		var err error
 		apiClient, err = api.NewClient(cfg.AriandURL, "", cfg.APIKey)
 		if err != nil {
 			logger.Fatal("api client init", "err", err)
@@ -104,7 +107,7 @@ func main() {
 
 	// 2. initialize the email handler and smtp server
 	handler := smtp.NewEmailHandler(apiClient, logger)
-	smtpServer := smtp.NewServer(cfg.SMTPAddr, cfg.SMTPDomain, handler)
+	smtpServer := smtp.NewServer(cfg.SMTPAddr, cfg.Domain, handler)
 
 	// configure TLS if certificates are provided
 	if cfg.TLSCert != "" && cfg.TLSKey != "" {
