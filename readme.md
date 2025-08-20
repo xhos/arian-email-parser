@@ -1,18 +1,39 @@
 # arian-email-parser
 
-If your bank is shitty, and doesn't provide a decent way to visualize your transactions, this is for you.
+arian-parser is designed to parse bank transactions from emails. it just runs an smtp server, so you are expected to set up forwarding rules in the email client. the parser extracts relevant transaction information using bank-specific parsers, and sends over the data to [ariand](https://github.com/xhos/ariand). however the structure of the parser itself is largely decoupled from arian so if you want to send data elsewhere i recon you can do that too with a bit of effort.
 
-arian-parser is designed to parse bank transactions from emails. It integrates with Mailpit to fetch emails, extracts relevant transaction information using bank-specific parsers, and stores the structured data into a PostgreSQL database.
+## why?
 
-What you do with the data is up to you, but it is designed to be used with [arian](https://github.com/xhos/arian) to visualize your transactions, and provide insights into your spending habits.
+my bank does not have an api or any clean way for accessing my transactions (rbc im looking at you). sometimes they offer csv exports, but those for some reason don't have half the transactions i need, and it's not automatic anyways. so here we are, parsing emails to get the data we need. like cavemen.
+
+## ⚙️ config
+
+### cli params
+
+| param          | description            | default  |
+|----------------|------------------------|----------|
+| `--smtp-port`  | smtp server port       | `2525`   |
+| `--port`       | grpc health port       | `50052`  |
+
+### environment variables
+
+| variable      | description                     | default  | required?  |
+|---------------|---------------------------------|----------|------------|
+| `API_KEY`     | authentication key for ariand   |          | [x]        |
+| `ARIAND_URL`  | ariand grpc service url         |          | [x]        |
+| `DOMAIN`      | email domain to serve           |          | [x]        |
+| `LOG_LEVEL`   | log level (debug, info, warn)   | `info`   | [ ]        |
+| `TLS_CERT`    | tls certificate file path      |          | [ ]        |
+| `TLS_KEY`     | tls private key file path      |          | [ ]        |
+| `DEBUG`       | disable ariand connection      |          | [ ]        |
 
 ## setup
 
-Intended for use with docker compose, instructions are to be added later.
+intended for use with docker compose, instructions are to be added later. #TODO
 
 ## development
 
-I recommend to use `devenv` for a consistent development environment. It installs all necessary dependencies and provides helpers.
+i highly recommend to use `devenv` for a consistent development environment. it installs all necessary dependencies and provides helpers.
 
 ### project structure
 
@@ -26,26 +47,6 @@ I recommend to use `devenv` for a consistent development environment. It install
   - `parser/`: Defines common interfaces and helpers for email parsers.
 - `devenv.nix`: Configuration for the `devenv` development environment.
 
-### debug mode
-
-```shell
-docker run -d \
-  --name arian-parser-debug \
-  -p 25:25 \
-  -p 587:587 \
-  -p 2525:2525 \
-  -p 8080:8080 \
-  -v /path/to/your/certs:/certs \
-  -v /path/to/debug_emails:/debug_emails \
-  -e DEBUG=1 \
-  -e SMTP_ADDR=:25 \
-  -e SMTP_DOMAIN=yourdomain.com \
-  -e TLS_CERT=/certs/cert.pem \
-  -e TLS_KEY=/certs/key.pem \
-  -e HTTP_ADDR=:8080 \
-  ghcr.io/xhos/arian-email-parser:latest
-```
-
 ### adding new parsers
 
 it is quite easy to add new parsers for different banks, as long as you know a bit of go/regex, or willing to spend some time prompting it into existence.
@@ -54,10 +55,17 @@ it is quite easy to add new parsers for different banks, as long as you know a b
 2. implement the `parser.Parser` interface from `internal/parser/types.go`.
 3. register your new parser in an `init()` function within your new package (e.g., `parser.Register(&yourBankParser{})`).
 4. add a blank import for your new parser package in `internal/email/all/all.go`.
-5. write tests for your new parser, include test data (e.g., JSON email fixtures).
+5. write tests for your new parser, include test data (email objects can be obtained in debug mode).
 
 the added parser should work without any other changes.
 
-Pull requests for new parsers are welcome, as it's not feasible for me to cover banks I don't use myself.
+contributions are highly welcome, as it's not feasible for me to cover banks I don't use myself.
 
-## arian ecosystem
+## 🌱 ecosystem
+
+- [ariand](https://github.com/xhos/ariand) - main backend service
+- [arian-web](https://github.com/xhos/arian-web) - frontend web application
+- [arian-mobile](https://github.com/xhos/arian-mobile) - mobile appplication
+- [arian-protos](https://github.com/xhos/arian-protos) - shared protobuf definitions
+- [arian-receipts](https://github.com/xhos/arian-receipts) - receipt parsing microservice
+- [arian-email-parser](https://github.com/xhos/arian-email-parser) - email parsing service
