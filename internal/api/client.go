@@ -123,9 +123,7 @@ func (c *Client) CreateTransaction(userID string, tx *domain.Transaction) error 
 
 // withAuth adds authentication metadata to the context
 func (c *Client) withAuth(ctx context.Context) context.Context {
-	md := metadata.New(map[string]string{
-		"authorization": "Bearer " + c.authToken,
-	})
+	md := metadata.Pairs("x-internal-key", c.authToken)
 	return metadata.NewOutgoingContext(ctx, md)
 }
 
