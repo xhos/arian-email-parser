@@ -46,7 +46,8 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 		user, err := h.API.GetUser(userUUID)
 		if err != nil {
 			h.Log.Error("user not found", "user_uuid", userUUID, "err", err)
-			return fmt.Errorf("user %s not found: %w", userUUID, err)
+			// Return nil to accept the email and prevent retries - user might be temporarily unavailable
+			return nil
 		}
 		userID = user.Id
 		h.Log.Info("found user", "user_uuid", userUUID, "user_id", userID)
@@ -81,7 +82,8 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 	txn, err := prsr.Parse(meta)
 	if err != nil {
 		h.Log.Error("parse failed", "user_uuid", userUUID, "err", err)
-		return err
+		// Return nil to accept the email and prevent retries - this is our parsing issue, not sender's
+		return nil
 	}
 	if txn == nil {
 		return nil
@@ -106,7 +108,8 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 	accounts, err := h.API.GetAccounts(userID)
 	if err != nil {
 		h.Log.Error("failed to fetch accounts", "err", err)
-		return err
+		// Return nil to accept the email and prevent retries - this is a temporary API issue
+		return nil
 	}
 
 	// build account lookup map
@@ -129,7 +132,8 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 		user, err := h.API.GetUser(userUUID)
 		if err != nil {
 			h.Log.Error("failed to get user for default account", "err", err)
-			return err
+			// Return nil to accept the email and prevent retries - this is a temporary API issue
+			return nil
 		}
 
 		if user.GetDefaultAccountId() > 0 {
@@ -156,7 +160,16 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 		"amount", txn.TxAmount,
 		"description", txn.TxDesc)
 
-	return h.API.CreateTransaction(userID, txn)
+	err = h.API.CreateTransaction(userID, txn)
+	if err != nil {
+		h.Log.Error("failed to create transaction", "user_uuid", userUUID, "err", err)
+		// Always accept the email to prevent retries and duplicates
+		// If it's a real issue, we'll see it in logs and can investigate
+		return nil
+	}
+
+	h.Log.Info("successfully processed email", "user_uuid", userUUID, "email_id", txn.EmailID)
+	return nil
 }
 
 // saveEmailToFile saves email content to debug directory when DEBUG env var is set
