@@ -14,7 +14,6 @@ import (
 	"github.com/charmbracelet/log"
 )
 
-// EmailHandler processes incoming SMTP emails
 type EmailHandler struct {
 	API *api.Client
 	Log *log.Logger
@@ -27,70 +26,61 @@ func NewEmailHandler(apiClient *api.Client, log *log.Logger) *EmailHandler {
 	}
 }
 
-// ProcessEmail implements the Handler interface
-func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, data []byte) error {
+func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []byte) error {
 	h.Log.Info("processing email", "user_uuid", userUUID, "from", from)
 
-	// save email to file if DEBUG is enabled
-	if os.Getenv("DEBUG") != "" {
+	debug := os.Getenv("DEBUG") != ""
+
+	if debug {
 		if err := h.saveEmailToFile(userUUID, from, data); err != nil {
 			h.Log.Warn("failed to save debug email file", "err", err)
 		}
 	}
 
-	var userID string = "1" // default for debug mode
-
-	// skip ARIAND connection in debug mode
-	if os.Getenv("DEBUG") == "" {
-		// validate user exists
+	// resolve user id (or debug default)
+	userID := "1"
+	if !debug {
 		user, err := h.API.GetUser(userUUID)
 		if err != nil {
 			h.Log.Error("user not found", "user_uuid", userUUID, "err", err)
-			// Return nil to accept the email and prevent retries - user might be temporarily unavailable
-			return nil
+			return nil // accept email to avoid retries
 		}
 		userID = user.Id
-		h.Log.Info("found user", "user_uuid", userUUID, "user_id", userID)
+		h.Log.Info("found user", "user_id", userID)
 	} else {
-		h.Log.Info("debug mode: skipping user validation", "user_uuid", userUUID)
+		h.Log.Info("debug enabled: skipping user validation", "user_uuid", userUUID)
 	}
 
-	// decode raw email content
-	decodedContent, err := email.DecodeEmailContent(data)
+	decoded, err := email.DecodeEmailContent(data)
 	if err != nil {
 		h.Log.Error("failed to decode email content", "err", err)
-		// Return nil to accept the email and prevent retries - this is our parsing issue, not sender's
 		return nil
 	}
 
-	// parse email into metadata
-	meta, err := parser.ToEmailMeta(fmt.Sprintf("%s-%d", userUUID, len(data)), decodedContent)
+	h.Log.Debug("decoded email", "content", decoded)
+
+	meta, err := parser.ToEmailMeta(fmt.Sprintf("%s-%d", userUUID, len(data)), decoded)
 	if err != nil {
 		h.Log.Error("failed to parse email metadata", "err", err)
-		// Return nil to accept the email and prevent retries - this is our parsing issue, not sender's
 		return nil
 	}
 
-	// find appropriate parser
 	prsr := parser.Find(meta)
 	if prsr == nil {
 		h.Log.Info("no parser matched", "user_uuid", userUUID, "subject", meta.Subject)
 		return nil
 	}
 
-	// parse transaction
 	txn, err := prsr.Parse(meta)
 	if err != nil {
 		h.Log.Error("parse failed", "user_uuid", userUUID, "err", err)
-		// Return nil to accept the email and prevent retries - this is our parsing issue, not sender's
 		return nil
 	}
 	if txn == nil {
 		return nil
 	}
 
-	// in debug mode, just log the parsed transaction
-	if os.Getenv("DEBUG") != "" {
+	if debug {
 		h.Log.Info("parsed transaction (debug mode)",
 			"user_uuid", userUUID,
 			"email_id", txn.EmailID,
@@ -100,71 +90,52 @@ func (h *EmailHandler) ProcessEmail(userUUID string, from string, to []string, d
 			"amount", txn.TxAmount,
 			"currency", txn.TxCurrency,
 			"direction", txn.TxDirection,
-			"description", txn.TxDesc)
+			"description", txn.TxDesc,
+		)
 		return nil
 	}
 
-	// get user's accounts
 	accounts, err := h.API.GetAccounts(userID)
 	if err != nil {
 		h.Log.Error("failed to fetch accounts", "err", err)
-		// Return nil to accept the email and prevent retries - this is a temporary API issue
 		return nil
 	}
 
-	// build account lookup map
-	accountMap := make(map[string]int)
+	accountMap := make(map[string]int, len(accounts))
 	for _, acc := range accounts {
 		if acc.Name == "" {
 			continue
 		}
-		key := fmt.Sprintf("%s-%s", acc.Bank, acc.Name)
-		accountMap[key] = int(acc.Id)
+		accountMap[fmt.Sprintf("%s-%s", acc.Bank, acc.Name)] = int(acc.Id)
 	}
 
-	// look up account
 	cleanAccount := strings.TrimLeft(txn.TxAccount, "*")
 	accountKey := fmt.Sprintf("%s-%s", txn.TxBank, cleanAccount)
 
 	accountID, ok := accountMap[accountKey]
 	if !ok {
-		// try to use user's default account if available
 		user, err := h.API.GetUser(userUUID)
 		if err != nil {
 			h.Log.Error("failed to get user for default account", "err", err)
-			// Return nil to accept the email and prevent retries - this is a temporary API issue
 			return nil
 		}
-
-		if user.GetDefaultAccountId() > 0 {
-			accountID = int(user.GetDefaultAccountId())
-			h.Log.Info("using default account for unrecognized account",
-				"user_uuid", userUUID,
-				"bank", txn.TxBank,
-				"account", cleanAccount,
-				"default_account_id", accountID)
-		} else {
+		if user.GetDefaultAccountId() <= 0 {
 			h.Log.Warn("unrecognized account and no default account set; skipping",
-				"user_uuid", userUUID,
-				"bank", txn.TxBank,
-				"account", cleanAccount)
+				"user_uuid", userUUID, "bank", txn.TxBank, "account", cleanAccount)
 			return nil
 		}
+		accountID = int(user.GetDefaultAccountId())
+		h.Log.Info("using default account for unrecognized account",
+			"user_uuid", userUUID, "bank", txn.TxBank, "account", cleanAccount, "default_account_id", accountID)
 	}
 
 	txn.AccountID = accountID
 
 	h.Log.Info("creating transaction",
-		"user_uuid", userUUID,
-		"account_id", accountID,
-		"amount", txn.TxAmount,
-		"description", txn.TxDesc)
+		"user_uuid", userUUID, "account_id", accountID, "amount", txn.TxAmount, "description", txn.TxDesc)
 
-	err = h.API.CreateTransaction(userID, txn)
-	if err != nil {
+	if err := h.API.CreateTransaction(userID, txn); err != nil {
 		h.Log.Error("failed to create transaction", "user_uuid", userUUID, "err", err)
-		// Always accept the email to prevent retries and duplicates
-		// If it's a real issue, we'll see it in logs and can investigate
 		return nil
 	}
 
