@@ -1,6 +1,8 @@
 {pkgs, ...}: {
   packages = with pkgs; [
     buf
+    air
+    acme-sh
   ];
 
   languages.go.enable = true;

@@ -7,5 +7,6 @@ devenv.local.nix
 .env
 cfg/
 .idea
-*.sh
 *.pem
+tmp/
+certs/
