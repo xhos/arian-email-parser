@@ -26,26 +26,18 @@ type Config struct {
 }
 
 func loadConfig(smtpAddr, grpcAddr string) Config {
-	apiKey := os.Getenv("API_KEY")
-	if apiKey == "" {
-		panic("API_KEY environment variable is required")
-	}
-
-	ariandURL := os.Getenv("ARIAND_URL")
-	if ariandURL == "" {
-		panic("ARIAND_URL environment variable is required")
-	}
-
-	domain := os.Getenv("DOMAIN")
-	if domain == "" {
-		panic("DOMAIN environment variable is required")
+	requiredEnvs := []string{"API_KEY", "ARIAND_URL", "DOMAIN"}
+	for _, env := range requiredEnvs {
+		if os.Getenv(env) == "" {
+			panic(env + " environment variable is required")
+		}
 	}
 
 	return Config{
-		AriandURL: ariandURL,
-		APIKey:    apiKey,
+		AriandURL: os.Getenv("ARIAND_URL"),
+		APIKey:    os.Getenv("API_KEY"),
 		SMTPAddr:  smtpAddr,
-		Domain:    domain,
+		Domain:    os.Getenv("DOMAIN"),
 		TLSCert:   os.Getenv("TLS_CERT"),
 		TLSKey:    os.Getenv("TLS_KEY"),
 		GRPCAddr:  grpcAddr,
@@ -88,37 +80,33 @@ func main() {
 
 	cfg := loadConfig(":"+*smtpPort, ":"+*grpcPort)
 
-	// 1. initialize the API Client (skip in debug mode)
-	var apiClient *api.Client
-	if os.Getenv("DEBUG") == "" {
-		var err error
-		apiClient, err = api.NewClient(cfg.AriandURL, "", cfg.APIKey)
-		if err != nil {
-			logger.Fatal("api client init", "err", err)
-		}
-		defer func() {
-			if err := apiClient.Close(); err != nil {
-				logger.Error("failed to close gRPC connection", "err", err)
-			}
-		}()
-	} else {
-		logger.Info("debug mode: skipping API client initialization")
+	// 1. initialize the API Client
+	apiClient, err := api.NewClient(cfg.AriandURL, "", cfg.APIKey)
+	if err != nil {
+		logger.Fatal("api client init", "err", err)
 	}
+	defer func() {
+		if err := apiClient.Close(); err != nil {
+			logger.Error("failed to close gRPC connection", "err", err)
+		}
+	}()
 
-	// 2. initialize the email handler and smtp server
+	// 2. initialize services
 	handler := smtp.NewEmailHandler(apiClient, logger)
 	smtpServer := smtp.NewServer(cfg.SMTPAddr, cfg.Domain, handler)
-
-	// configure TLS if certificates are provided
 	if cfg.TLSCert != "" && cfg.TLSKey != "" {
 		smtpServer = smtpServer.WithTLS(cfg.TLSCert, cfg.TLSKey)
 	}
 
-	// gRPC health server
 	grpcHealthSrv, err := grpc.NewHealthServer(cfg.GRPCAddr)
 	if err != nil {
 		logger.Fatal("grpc health server init", "err", err)
 	}
+
+	// 3. start servers
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
 	go func() {
 		logger.Info("grpc health server starting", "addr", cfg.GRPCAddr)
 		if err := grpcHealthSrv.Start(); err != nil {
@@ -126,23 +114,18 @@ func main() {
 		}
 	}()
 
-	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
-
-	// start smtp server
 	go func() {
 		if err := smtpServer.Start(ctx); err != nil {
 			logger.Fatal("smtp server error", "err", err)
 		}
 	}()
 
-	// graceful shutdown
+	// 4. graceful shutdown
 	stop := make(chan os.Signal, 1)
 	signal.Notify(stop, os.Interrupt, syscall.SIGTERM)
 	<-stop
 	logger.Info("shutting down. bye!")
 
 	cancel()
-
 	grpcHealthSrv.Stop()
 }

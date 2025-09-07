@@ -23,9 +23,9 @@ my bank does not have an api or any clean way for accessing my transactions (rbc
 | `ARIAND_URL`  | ariand grpc service url         |          | [x]        |
 | `DOMAIN`      | email domain to serve           |          | [x]        |
 | `LOG_LEVEL`   | log level (debug, info, warn)   | `info`   | [ ]        |
-| `TLS_CERT`    | tls certificate file path      |          | [ ]        |
-| `TLS_KEY`     | tls private key file path      |          | [ ]        |
-| `DEBUG`       | disable ariand connection      |          | [ ]        |
+| `TLS_CERT`    | tls certificate file path       |          | [ ]        |
+| `TLS_KEY`     | tls private key file path       |          | [ ]        |
+| `DEBUG`       | log email contents              |          | [ ]        |
 
 ## setup
 
@@ -61,7 +61,12 @@ the added parser should work without any other changes.
 
 contributions are highly welcome, as it's not feasible for me to cover banks I don't use myself.
 
+## development
+
+the `DEBUG=1` env make it so the incoming email contents are logged, which is useful for developing new parsers.
+
 ## 🌱 ecosystem
+
 
 ```definition
 arian (n.) /ˈarjan/ [Welsh] Silver; money; wealth.  

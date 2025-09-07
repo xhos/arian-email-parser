@@ -37,19 +37,14 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 		}
 	}
 
-	// resolve user id (or debug default)
-	userID := "1"
-	if !debug {
-		user, err := h.API.GetUser(userUUID)
-		if err != nil {
-			h.Log.Error("user not found", "user_uuid", userUUID, "err", err)
-			return nil // accept email to avoid retries
-		}
-		userID = user.Id
-		h.Log.Info("found user", "user_id", userID)
-	} else {
-		h.Log.Info("debug enabled: skipping user validation", "user_uuid", userUUID)
+	// resolve user id
+	user, err := h.API.GetUser(userUUID)
+	if err != nil {
+		h.Log.Error("user not found", "user_uuid", userUUID, "err", err)
+		return nil // accept email to avoid retries
 	}
+	userID := user.Id
+	h.Log.Info("found user", "user_id", userID)
 
 	decoded, err := email.DecodeEmailContent(data)
 	if err != nil {
@@ -92,7 +87,6 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 			"direction", txn.TxDirection,
 			"description", txn.TxDesc,
 		)
-		return nil
 	}
 
 	accounts, err := h.API.GetAccounts(userID)
@@ -114,11 +108,6 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 
 	accountID, ok := accountMap[accountKey]
 	if !ok {
-		user, err := h.API.GetUser(userUUID)
-		if err != nil {
-			h.Log.Error("failed to get user for default account", "err", err)
-			return nil
-		}
 		if user.GetDefaultAccountId() <= 0 {
 			h.Log.Warn("unrecognized account and no default account set; skipping",
 				"user_uuid", userUUID, "bank", txn.TxBank, "account", cleanAccount)
@@ -145,7 +134,7 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 
 // saveEmailToFile saves email content to debug directory when DEBUG env var is set
 func (h *EmailHandler) saveEmailToFile(userUUID, from string, data []byte) error {
-	debugDir := "debug_emails"
+	const debugDir = "debug_emails"
 	if err := os.MkdirAll(debugDir, 0755); err != nil {
 		return fmt.Errorf("failed to create debug directory: %w", err)
 	}
@@ -197,8 +186,9 @@ func sanitizeFilename(subject string) string {
 		sanitized = strings.ReplaceAll(sanitized, char, "_")
 	}
 
-	if len(sanitized) > 50 {
-		sanitized = sanitized[:50]
+	const maxFilenameLength = 50
+	if len(sanitized) > maxFilenameLength {
+		sanitized = sanitized[:maxFilenameLength]
 	}
 
 	sanitized = strings.TrimRight(sanitized, "_")

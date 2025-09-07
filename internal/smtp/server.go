@@ -5,7 +5,6 @@ import (
 	"crypto/tls"
 	"fmt"
 	"net"
-	"os"
 	"regexp"
 	"strings"
 
@@ -88,12 +87,6 @@ func (s *Server) mailHandler(origin net.Addr, from string, to []string, data []b
 	}
 
 	recipient := strings.ToLower(to[0])
-
-	// in debug mode, allow debug@domain.com emails
-	if os.Getenv("DEBUG") != "" && strings.HasPrefix(recipient, "debug@") {
-		s.log.Info("processing debug email", "from", from, "to", recipient)
-		return s.handler.ProcessEmail("debug", from, to, data)
-	}
 
 	matches := uuidPattern.FindStringSubmatch(recipient)
 	if len(matches) < 2 {
