@@ -23,10 +23,7 @@ func NewHealthServer(addr string) (*HealthServer, error) {
 	server := grpc.NewServer()
 	healthSrv := health.NewServer()
 
-	// Register the health service
 	grpc_health_v1.RegisterHealthServer(server, healthSrv)
-
-	// Set the service as serving
 	healthSrv.SetServingStatus("", grpc_health_v1.HealthCheckResponse_SERVING)
 
 	return &HealthServer{

@@ -33,7 +33,9 @@ intended for use with docker compose, instructions are to be added later. #TODO
 
 ## development
 
-i highly recommend to use `devenv` for a consistent development environment. it installs all necessary dependencies and provides helpers.
+- i highly recommend to use `devenv` for a consistent development environment. it installs all necessary dependencies and provides helpers.
+
+- the `DEBUG=1` env make it so the incoming email contents are logged, which is useful for developing new parsers.
 
 ### project structure
 
@@ -60,10 +62,6 @@ it is quite easy to add new parsers for different banks, as long as you know a b
 the added parser should work without any other changes.
 
 contributions are highly welcome, as it's not feasible for me to cover banks I don't use myself.
-
-## development
-
-the `DEBUG=1` env make it so the incoming email contents are logged, which is useful for developing new parsers.
 
 ## 🌱 ecosystem
 
