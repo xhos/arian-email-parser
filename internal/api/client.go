@@ -13,6 +13,7 @@ import (
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/health/grpc_health_v1"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 	"google.golang.org/protobuf/types/known/timestamppb"
@@ -23,6 +24,7 @@ type Client struct {
 	accountClient pb.AccountServiceClient
 	txClient      pb.TransactionServiceClient
 	userClient    pb.UserServiceClient
+	healthClient  grpc_health_v1.HealthClient
 	authToken     string
 	log           *log.Logger
 }
@@ -38,6 +40,7 @@ func NewClient(ariandURL, _, authToken string) (*Client, error) {
 		accountClient: pb.NewAccountServiceClient(conn),
 		txClient:      pb.NewTransactionServiceClient(conn),
 		userClient:    pb.NewUserServiceClient(conn),
+		healthClient:  grpc_health_v1.NewHealthClient(conn),
 		authToken:     authToken,
 		log:           log.NewWithOptions(os.Stderr, log.Options{Prefix: "grpc-client"}),
 	}, nil
@@ -45,6 +48,23 @@ func NewClient(ariandURL, _, authToken string) (*Client, error) {
 
 func (c *Client) Close() error {
 	return c.conn.Close()
+}
+
+func (c *Client) Ping() error {
+	ctx := context.Background()
+
+	resp, err := c.healthClient.Check(ctx, &grpc_health_v1.HealthCheckRequest{
+		Service: "arian.v1.UserService",
+	})
+	if err != nil {
+		return fmt.Errorf("failed to ping ariand: %w", err)
+	}
+
+	if resp.Status != grpc_health_v1.HealthCheckResponse_SERVING {
+		return fmt.Errorf("ariand service not healthy: %s", resp.Status)
+	}
+
+	return nil
 }
 
 // GetUser retrieves a user by UUID
@@ -78,6 +98,30 @@ func (c *Client) GetAccounts(userID string) ([]*pb.Account, error) {
 
 	c.log.Info("successfully fetched accounts", "count", len(resp.Accounts))
 	return resp.Accounts, nil
+}
+
+func (c *Client) CreateAccount(userID, name, bank string) (*pb.Account, error) {
+	ctx := c.withAuth(context.Background())
+
+	req := &pb.CreateAccountRequest{
+		UserId: userID,
+		Name:   name,
+		Bank:   bank,
+		Type:   pb.AccountType_ACCOUNT_CHEQUING,
+		AnchorBalance: &money.Money{
+			CurrencyCode: "CAD",
+			Units:        0,
+			Nanos:        0,
+		},
+	}
+
+	resp, err := c.accountClient.CreateAccount(ctx, req)
+	if err != nil {
+		return nil, fmt.Errorf("failed to create account: %w", err)
+	}
+
+	c.log.Info("successfully created account", "name", name, "bank", bank, "account_id", resp.Account.Id)
+	return resp.Account, nil
 }
 
 func (c *Client) CreateTransaction(userID string, tx *domain.Transaction) error {

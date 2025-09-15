@@ -11,11 +11,16 @@ import (
 )
 
 // ExtractFields applies each regex to the email body and returns the single capture group for each key
+// The "account" field is optional - if not found, it will be set to empty string
 func ExtractFields(emailBody string, patterns map[string]*regexp.Regexp) (map[string]string, error) {
 	out := make(map[string]string, len(patterns))
 	for key, re := range patterns {
 		m := re.FindStringSubmatch(emailBody)
 		if len(m) < 2 {
+			if key == "account" {
+				out[key] = ""
+				continue
+			}
 			return nil, fmt.Errorf("field %q not found in text", key)
 		}
 		out[key] = m[1]

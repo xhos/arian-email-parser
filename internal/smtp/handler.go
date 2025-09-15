@@ -2,8 +2,10 @@ package smtp
 
 import (
 	"arian-parser/internal/api"
+	"arian-parser/internal/domain"
 	"arian-parser/internal/email"
 	_ "arian-parser/internal/email/all"
+	pb "arian-parser/internal/gen/arian/v1"
 	"arian-parser/internal/parser"
 	"fmt"
 	"os"
@@ -29,9 +31,7 @@ func NewEmailHandler(apiClient *api.Client, log *log.Logger) *EmailHandler {
 func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []byte) error {
 	h.Log.Info("processing email", "user_uuid", userUUID, "from", from)
 
-	debug := os.Getenv("DEBUG") != ""
-
-	if debug {
+	if os.Getenv("SAVE_EML") != "" {
 		if err := h.saveEmailToFile(userUUID, from, data); err != nil {
 			h.Log.Warn("failed to save debug email file", "err", err)
 		}
@@ -46,15 +46,13 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 	userID := user.Id
 	h.Log.Info("found user", "user_id", userID)
 
-	decoded, err := email.DecodeEmailContent(data)
+	msg, decoded, err := email.ParseMessage(data)
 	if err != nil {
-		h.Log.Error("failed to decode email content", "err", err)
+		h.Log.Error("failed to parse email message", "err", err)
 		return nil
 	}
 
-	h.Log.Debug("decoded email", "content", decoded)
-
-	meta, err := parser.ToEmailMeta(fmt.Sprintf("%s-%d", userUUID, len(data)), decoded)
+	meta, err := parser.ToEmailMeta(fmt.Sprintf("%s-%d", userUUID, len(data)), msg, decoded)
 	if err != nil {
 		h.Log.Error("failed to parse email metadata", "err", err)
 		return nil
@@ -75,19 +73,17 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 		return nil
 	}
 
-	if debug {
-		h.Log.Info("parsed transaction (debug mode)",
-			"user_uuid", userUUID,
-			"email_id", txn.EmailID,
-			"tx_date", txn.TxDate,
-			"bank", txn.TxBank,
-			"account", txn.TxAccount,
-			"amount", txn.TxAmount,
-			"currency", txn.TxCurrency,
-			"direction", txn.TxDirection,
-			"description", txn.TxDesc,
-		)
-	}
+	h.Log.Debug("parsed transaction",
+		"user_uuid", userUUID,
+		"email_id", txn.EmailID,
+		"tx_date", txn.TxDate,
+		"bank", txn.TxBank,
+		"account", txn.TxAccount,
+		"amount", txn.TxAmount,
+		"currency", txn.TxCurrency,
+		"direction", txn.TxDirection,
+		"description", txn.TxDesc,
+	)
 
 	accounts, err := h.API.GetAccounts(userID)
 	if err != nil {
@@ -103,45 +99,27 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 		accountMap[fmt.Sprintf("%s-%s", acc.Bank, acc.Name)] = int(acc.Id)
 	}
 
-	cleanAccount := strings.TrimLeft(txn.TxAccount, "*")
-	accountKey := fmt.Sprintf("%s-%s", txn.TxBank, cleanAccount)
-
-	accountID, ok := accountMap[accountKey]
-	if !ok {
-		if user.GetDefaultAccountId() <= 0 {
-			h.Log.Warn("unrecognized account and no default account set; skipping",
-				"user_uuid", userUUID, "bank", txn.TxBank, "account", cleanAccount)
-			return nil
-		}
-		accountID = int(user.GetDefaultAccountId())
-		h.Log.Info("using default account for unrecognized account",
-			"user_uuid", userUUID, "bank", txn.TxBank, "account", cleanAccount, "default_account_id", accountID)
+	if err := h.resolveAccount(userUUID, txn, accountMap, user); err != nil {
+		return err
 	}
-
-	txn.AccountID = accountID
-
-	h.Log.Info("creating transaction",
-		"user_uuid", userUUID, "account_id", accountID, "amount", txn.TxAmount, "description", txn.TxDesc)
 
 	if err := h.API.CreateTransaction(userID, txn); err != nil {
 		h.Log.Error("failed to create transaction", "user_uuid", userUUID, "err", err)
 		return nil
 	}
 
-	h.Log.Info("successfully processed email", "user_uuid", userUUID, "email_id", txn.EmailID)
 	return nil
 }
 
-// saveEmailToFile saves email content to debug directory when DEBUG env var is set
 func (h *EmailHandler) saveEmailToFile(userUUID, from string, data []byte) error {
 	const debugDir = "debug_emails"
 	if err := os.MkdirAll(debugDir, 0755); err != nil {
 		return fmt.Errorf("failed to create debug directory: %w", err)
 	}
 
-	decodedContent, err := email.DecodeEmailContent(data)
+	msg, _, err := email.ParseMessage(data)
 	if err != nil {
-		h.Log.Warn("failed to decode email for debug file, saving raw", "err", err)
+		h.Log.Warn("failed to parse email for debug file, saving raw", "err", err)
 		timestamp := time.Now().Format("20060102-150405")
 		filename := fmt.Sprintf("%s_%s_%s.eml", userUUID, timestamp, strings.ReplaceAll(from, "@", "_at_"))
 		filePath := filepath.Join(debugDir, filename)
@@ -153,32 +131,51 @@ func (h *EmailHandler) saveEmailToFile(userUUID, from string, data []byte) error
 		return nil
 	}
 
-	subject := extractSubjectFromContent(decodedContent)
+	subject := msg.Header.Get("Subject")
 	sanitizedSubject := sanitizeFilename(subject)
-
 	timestamp := time.Now().Format("20060102-150405")
-	filename := fmt.Sprintf("%s_%s_%s_%s.txt", userUUID, timestamp, sanitizedSubject, strings.ReplaceAll(from, "@", "_at_"))
+
+	filename := fmt.Sprintf("%s_%s_%s_%s.eml", userUUID, timestamp, sanitizedSubject, strings.ReplaceAll(from, "@", "_at_"))
 	filePath := filepath.Join(debugDir, filename)
 
-	if err := os.WriteFile(filePath, []byte(decodedContent), 0644); err != nil {
+	if err := os.WriteFile(filePath, data, 0644); err != nil {
 		return fmt.Errorf("failed to write debug email file: %w", err)
 	}
 
-	h.Log.Info("saved decoded debug email file", "path", filePath, "size", len(decodedContent), "subject", subject)
+	h.Log.Info("saved debug email file", "path", filePath, "size", len(data), "subject", subject)
 	return nil
 }
 
-// extractSubjectFromContent extracts subject line from decoded email content
-func extractSubjectFromContent(content string) string {
-	for line := range strings.SplitSeq(content, "\n") {
-		if subject, found := strings.CutPrefix(line, "Subject:"); found {
-			return strings.TrimSpace(subject)
+func (h *EmailHandler) resolveAccount(userUUID string, txn *domain.Transaction, accountMap map[string]int, user *pb.User) error {
+	noAccountParsed := txn.TxAccount == ""
+	noDefaultAccount := user.GetDefaultAccountId() <= 0
+
+	if noAccountParsed {
+		if noDefaultAccount {
+			h.Log.Warn("no account parsed and no default set; skipping", "user_uuid", userUUID)
+			return nil
 		}
+		txn.AccountID = int(user.GetDefaultAccountId())
+		return nil
 	}
-	return "no-subject"
+
+	cleanAccount := strings.TrimLeft(txn.TxAccount, "*")
+	accountKey := fmt.Sprintf("%s-%s", txn.TxBank, cleanAccount)
+
+	if existingAccountID, exists := accountMap[accountKey]; exists {
+		txn.AccountID = existingAccountID
+		return nil
+	}
+
+	account, err := h.API.CreateAccount(userUUID, cleanAccount, txn.TxBank)
+	if err != nil {
+		return fmt.Errorf("failed to create account for %s-%s: %w", txn.TxBank, cleanAccount, err)
+	}
+
+	txn.AccountID = int(account.Id)
+	return nil
 }
 
-// sanitizeFilename removes invalid characters from subject for use in filename
 func sanitizeFilename(subject string) string {
 	invalid := []string{"/", "\\", ":", "*", "?", "\"", "<", ">", "|", " "}
 	sanitized := subject

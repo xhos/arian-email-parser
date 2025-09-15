@@ -2,7 +2,7 @@ package parser
 
 import (
 	"arian-parser/internal/domain"
-	"strings"
+	"net/mail"
 )
 
 // EmailMeta holds the minimal fields needed to pick and parse a message
@@ -19,39 +19,20 @@ type Parser interface {
 	Parse(meta EmailMeta) (*domain.Transaction, error)
 }
 
-// ToEmailMeta creates EmailMeta from decoded email content
-func ToEmailMeta(id string, decodedContent string) (EmailMeta, error) {
-	// Extract subject from email headers in the decoded content
-	subject := extractSubject(decodedContent)
-	// Extract date from email headers
-	date := extractDate(decodedContent)
+func ToEmailMeta(id string, msg *mail.Message, decodedContent string) (EmailMeta, error) {
+	subject := msg.Header.Get("Subject")
+
+	var dateStr string
+	if parsedDate, err := msg.Header.Date(); err == nil {
+		dateStr = parsedDate.Format("2006-01-02T15:04:05Z07:00") // RFC3339
+	} else {
+		dateStr = msg.Header.Get("Date")
+	}
 
 	return EmailMeta{
 		ID:      id,
 		Subject: subject,
 		Text:    decodedContent,
-		Date:    date,
+		Date:    dateStr,
 	}, nil
-}
-
-// extractSubject finds the Subject header in decoded email content
-func extractSubject(content string) string {
-	lines := strings.Split(content, "\n")
-	for _, line := range lines {
-		if strings.HasPrefix(line, "Subject:") {
-			return strings.TrimSpace(strings.TrimPrefix(line, "Subject:"))
-		}
-	}
-	return ""
-}
-
-// extractDate finds the Date header in decoded email content
-func extractDate(content string) string {
-	lines := strings.Split(content, "\n")
-	for _, line := range lines {
-		if strings.HasPrefix(line, "Date:") {
-			return strings.TrimSpace(strings.TrimPrefix(line, "Date:"))
-		}
-	}
-	return ""
 }
