@@ -19,9 +19,9 @@ func (p *payment) Match(m parser.EmailMeta) bool {
 
 func (p *payment) Parse(m parser.EmailMeta) (*domain.Transaction, error) {
 	patterns := map[string]*regexp.Regexp{
-		"account": regexp.MustCompile(`(?s)[>\s]*Account:.*?(\*+\d+)`),
-		"amount":  regexp.MustCompile(`(?s)[>\s]*Payment Amount:.*?\$\s*([\d,]+\.\d{2})`),
-		"txdate":  regexp.MustCompile(`(?s)[>\s]*Transaction Date:.*?([A-Za-z]+\s+\d{1,2},\s+\d{4})`),
+		"account": regexp.MustCompile(`(\*{12}\d+|\*+\d+)`),
+		"amount":  regexp.MustCompile(`\$(\d+\.\d{2})`),
+		"txdate":  regexp.MustCompile(`([A-Za-z]+ \d{1,2}, \d{4})`),
 	}
 	fields, err := parser.ExtractFields(m.Text, patterns)
 	if err != nil {

@@ -7,8 +7,8 @@ import (
 
 const (
 	Major    = 0
-	Minor    = 1
-	Patch    = 7
+	Minor    = 2
+	Patch    = 0
 	RepoName = "arian-email-parser"
 	RepoURL  = "https://github.com/xhos/arian-email-parser"
 )

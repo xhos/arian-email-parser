@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"arian-parser/internal/domain"
+	"arian-parser/internal/email"
 	"arian-parser/internal/parser"
 )
 
@@ -33,7 +34,12 @@ func assertTransaction(
 		t.Fatalf("failed to read fixture %s: %v", fixturePath, err)
 	}
 
-	meta, err := parser.ToEmailMeta(emailID, string(rawBytes))
+	msg, content, err := email.ParseMessage(rawBytes)
+	if err != nil {
+		t.Fatalf("failed to parse email message from %s: %v", fixturePath, err)
+	}
+
+	meta, err := parser.ToEmailMeta(emailID, msg, content)
 	if err != nil {
 		t.Fatalf("toEmailMeta failed for %s: %v", fixturePath, err)
 	}

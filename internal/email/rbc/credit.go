@@ -19,10 +19,10 @@ func (p *credit) Match(m parser.EmailMeta) bool {
 
 func (p *credit) Parse(m parser.EmailMeta) (*domain.Transaction, error) {
 	patterns := map[string]*regexp.Regexp{
-		"account": regexp.MustCompile(`Account:(?:\s*\n\s*>\s*\n\s*>\s*|\s*\n\s*>\s*\n\s*)(\*+\d+)`),
-		"amount":  regexp.MustCompile(`Purchase Amount:(?:\s*\n\s*>\s*\n\s*>\s*|\s*\n\s*>\s*\n\s*)\$([\d,]+\.\d{2})`),
-		"txdate":  regexp.MustCompile(`Transaction Date:(?:\s*\n\s*>\s*\n\s*>\s*|\s*\n\s*>\s*\n\s*)([A-Za-z]+ \d{1,2}, \d{4})`),
-		"desc":    regexp.MustCompile(`Transaction Description:(?:\s*\n\s*>\s*\n\s*>\s*|\s*\n\s*>\s*\n\s*)(.+)`),
+		"account": regexp.MustCompile(`(\*{12}\d+|\*+\d+)`),
+		"amount":  regexp.MustCompile(`\$(\d+\.\d{2})`),
+		"txdate":  regexp.MustCompile(`([A-Za-z]+ \d{1,2}, \d{4})`),
+		"desc":    regexp.MustCompile(`from ([A-Z][A-Z' ]+[A-Z])`),
 	}
 	fields, err := parser.ExtractFields(m.Text, patterns)
 	if err != nil {

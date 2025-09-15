@@ -1,0 +1,713 @@
+Subject: You received a credit.
+From: Example <email@example.com>
+To: <email@example.com>
+Date: Tue, 10 Jun 2025 17:42:00 -0600
+
+
+
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://example.com>
+<html XMLNS="https://example.com lang="en">
+<head>
+<link href="https://example.com rel="stylesheet">
+<meta HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8" />
+<!--[if !mso]><!-->
+<meta HTTP-EQUIV="X-UA-Compatible" CONTENT="IE=edge" />
+<!--<![endif]-->
+<meta NAME="viewport" CONTENT="width=device-width, initial-scale=1.0" />
+<title>RBC Royal Bank</title>
+<style TYPE="text/css">
+@font-face {
+    font-family: RBCDisplay;
+    src: url(https://example.com) format("woff"), url(https://example.com) format("truetype");
+    font-weight: 300;
+    font-style: normal;}
+@font-face {
+    font-family: RBCDisplay;
+    src: url(https://example.com) format("woff"), url(https://example.com) format("truetype");
+    font-weight: 300;
+    font-style: italic;}
+@font-face{
+   font-family:Roboto;
+   src:url(https://example.com) format("woff"),url(https://example.com) format("truetype");
+    font-weight:300;
+    font-style:normal;}
+* {-webkit-font-smoothing: antialiased;}
+body {
+ Margin: 0;
+ padding: 0;
+ min-width: 100%;
+ font-family: 'Roboto', Arial, sans-serif;
+ -webkit-font-smoothing: antialiased;
+ mso-line-height-rule: exactly;
+  }
+H1, H2, H3, H4 .h1, .h2, .h3, .h4 {
+   font-family: 'RBCDisplay','Roboto', Arial, sans-serif;
+   font-weight: normal;
+   line-height: 1.2;
+   Margin: 0 0 15px 0;
+  }
+H1, .h1 {
+ font-size: 30px;
+ line-height: 37px !important;}
+H2, .h2 {
+ font-size: 24px;
+ line-height: 30px !important;}
+H3, .h3 {
+ font-size: 20px;
+ line-height: 25px !important;}
+td {
+   font-family: 'Roboto', Arial, sans-serif;}
+P {
+   font-family: inherit;
+   font-size: 16px;
+   line-height: 1.5;
+   Margin: 0 0 15px 0;}
+a {
+ color: #006ac3 !important;
+ text-decoration: underline !important;}
+a:hover {
+ text-decoration: none !important;}
+.legal P {
+   font-size: 11px;
+   line-height: 16px;
+   Margin: 0 0 0 0;
+   Padding: 0 0 0 0;
+  }
+.view-online {
+ color:#000000 !important;
+ font-family: Arial, sans-serif !important;
+ text-align:right !important;
+ align:right !important;}
+table {
+ border-spacing: 0;
+ color:#000000;
+ font-family: Arial, sans-serif, 'Roboto';
+ }
+img {
+border: 0;
+display:block;
+image-rendering: optimizeSpeed; /* */
+image-rendering: -moz-crisp-edges; /* Firefox */
+image-rendering: -o-crisp-edges; /* Opera */
+image-rendering: -webkit-optimize-contrast; /* Chrome (and Safari) */
+image-rendering: optimize-contrast; /* CSS3 Proposed */
+-ms-interpolation-mode: bicubic; /* IE8+ */
+ }
+.wrapper {
+ table-layout: fixed;
+ -ms-text-size-adjust: 100%;
+ -webkit-text-size-adjust: 100%;
+ margin: 0 auto;
+}
+.webkit {
+ max-width: 600px;
+ margin: 0 auto;
+}
+.outer {
+ Margin: 0 auto;
+ width: 100%;
+ max-width: 600px;
+}
+.full-width-image img {
+ width: 100%;
+ max-width: 600px;
+ height: auto;
+}
+.inner {
+ Margin: 0px;
+ padding: 0px;
+}
+p {
+ Margin: 0px;
+ padding:  0px;
+ }
+.paddingColumn {
+ Margin: 0px;
+ padding:  0px 80px 0px 80px;
+ }
+/* One column layout */
+.one-column .contents {
+ text-align: left;
+ font-family: Arial, sans-serif, 'Roboto';
+ -webkit-font-smoothing: antialiased;
+}
+.one-column p {
+ font-size: 14px;
+ Margin-bottom: 0px;
+ font-family: Arial, sans-serif, 'Roboto';
+ -webkit-font-smoothing: antialiased;
+}
+/*Two column layout*/
+.two-column {
+ text-align: center;
+ font-size: 0;
+}
+.two-column .column {
+ width: 100%;
+ max-width: 300px;
+ display: inline-block;
+ vertical-align:top;
+}
+.contents {
+ width: 100%;
+}
+.two-column .contents {
+ font-size: 0;
+ text-align: left;
+}
+.two-column img {
+ width: 100%;
+ max-width: 280px;
+ height: auto;
+ border: 0;
+ display: block;
+}
+.two-column .text {
+ padding-top: 0px;
+}
+/*Three column layout*/
+.three-column {
+ text-align: center;
+ font-size: 0;
+ padding-top: 10px;
+ padding-bottom: 10px;
+}
+.three-column .column {
+ width: 100%;
+ max-width: 200px;
+ display: inline-block;
+ vertical-align: top;
+}
+.three-column .contents {
+ font-size: 0;
+ text-align: center;
+}
+.three-column img {
+ width: 100%;
+ max-width: 180px;
+ height: auto;
+}
+.three-column .text {
+ padding-top: 10px;
+}
+.btnTextBlack {
+ color: #000000 !important;
+ align: center;
+ text-align: center;
+ text-decoration: none !important;}
+.btnTextBlack:hover {
+ text-decoration: none !important;
+}
+.btnTextWhite {
+ color: #ffffff !important;
+ align: center;
+ text-align: center;
+ text-decoration: none !important;}
+.btnTextWhite:hover {
+ text-decoration: none !important;
+}
+.btn180 {
+ color: #ffffff !important;
+ width:180px !important;
+ max-width: 180px;
+ align: center;
+ text-align: center;
+ text-decoration: none !important;}
+.btn180:hover {
+ text-decoration: none !important;
+}
+.btn220 {
+ color: #ffffff !important;
+ width:220px !important;
+ max-width:220px;
+ align: center;
+ text-align: center;
+ text-decoration: none !important;}
+.btn220:hover {
+ text-decoration: none !important;
+}
+.btn260 {
+ color: #ffffff !important;
+ width:260px !important;
+ max-width:260px;
+ align: center;
+ text-align: center;
+ text-decoration: none !important;}
+.btn260:hover {
+ text-decoration: none !important;
+}
+/*This resolves the issue when iphone puts links on dates, etc.*/
+.appleLinks a {
+ color: #000000;
+ text-decoration: none;
+}
+.appleLinks {
+ color: #000000;
+ text-decoration: none;
+}
+/****** MEDIA QUERIES ********/
+@media only screen and (device-width: 1024px) {
+.outer {max-width: 1000px !important;
+ }
+.mobile-hide {
+ display: none !important;
+ }
+td.hdrTxt {
+ font-size: 12px !important;
+}
+.three-column-container {
+ max-width: 1000px !important;
+ Margin: 0 auto;
+ text-align: center;
+ }
+}
+/*Media Queries*/
+@media screen and (min-width: 401px) and (max-width: 620px) {
+.webkit, .one-column {
+ max-width: 1000px !important;
+ }
+.two-column .column{
+ max-width: 150% !important;
+ }
+.two-column img {
+ max-width: 150% !important;
+}
+.mobile-hide {
+ display: none !important;
+ }
+.paddingColumn {
+ Margin: 0px;
+ padding:  0px 20px 0px 20px;}
+}
+@media only screen and (max-width: 599px) {
+.app-table {
+float: none;
+Margin: 0 auto;}
+}
+@media screen and (max-width: 400px) {
+.two-column .column{
+ max-width: 100% !important;}
+.two-column img {
+ max-width: 100% !important;}
+.bodyCopyResize{
+ font-size:16px !important;
+ line-height:20px !important;}
+.mobile-hide {
+ display: none !important;}
+.paddingColumn {
+ Margin: 0px;
+ padding:  0px 20px 0px 20px;}
+}
+</style>
+<style>
+@media only screen
+and (min-device-width: 320px)
+and (max-device-width: 767px) {
+H1, .h1 {
+ font-size: 26px !important;
+ line-height: 30px !important;
+ color: #006ac3 !important;}
+H2, .h2 {
+ font-size: 20px !important;
+ line-height: 24px !important;
+ color: #000000 !important;}
+H3, .h3 {
+ font-size: 18px !important;
+ line-height: 22px !important;
+ color: #000000 !important;}
+.mobile-show {
+display: block !important;
+height: auto !important;
+}
+.mobile-show table {
+width: 200px !important;
+height: auto !important;
+}
+.mobile-show td {
+min-height: 40px !important;
+height: auto !important;
+line-height: 22px !important;
+background-color: #006ac3 !important;
+}
+.mobile-show a {
+padding: 12px 10px !important;
+line-height: 22px !important;
+display: block !important;
+}
+.desktop-show {
+display: none !important;
+}
+}
+</style>
+<style>
+@media only screen
+and (min-device-width: 375px)
+and (max-device-width: 812px)
+and (-webkit-device-pixel-ratio: 3) {
+H1, .h1 {
+ font-size: 26px !important;
+ line-height: 30px !important;
+ color: #006ac3 !important;}
+H2, .h2 {
+ font-size: 20px !important;
+ line-height: 24px !important;
+ color: #000000 !important;}
+H3, .h3 {
+ font-size: 18px !important;
+ line-height: 22px !important;
+ color: #000000 !important;}
+.mobile-show {
+display: block !important;
+height: auto !important;
+}
+.mobile-show table {
+width: 200px !important;
+height: auto !important;
+}
+.mobile-show td {
+min-height: 40px !important;
+height: auto !important;
+line-height: 22px !important;
+background-color: #006ac3 !important;
+}
+.mobile-show a {
+padding: 12px 10px !important;
+line-height: 22px !important;
+display: block !important;
+}
+.desktop-show {
+display: none !important;
+}
+}
+</style>
+<style>
+@media (prefers-color-scheme: dark) {
+        /* Your dark mode styles: */
+.content {
+ background: white !important;
+ color: #fff !important;}
+    }
+</style>
+<!--[if (gte mso 9)|(IE)]>
+<style> .full-image {     width: 600px !important;     height: auto !important;} .half-image {     width: 300px !important;     height: auto !important;} .quarter-image {     width: 270px !important;     height: auto !important;} .full-530-image {     width: 530px !important;     height: auto !important;} .logo-image {     width: 140px !important;     height: auto !important;} .view-online {font-family: Arial, sans-serif !important; text-align:right !important;align:right !important;} table {border-collapse: collapse !important; align:center !important;} P {Margin: 0 0 15px 0; font-family: Arial, sans-serif !important; mso-line-height-rule: exactly; font-size: 16px;text-align:left;} p
+ {Margin: 0 0 15px 0; font-family: Arial, sans-serif !important; mso-line-height-rule: exactly; font-size: 16px;text-align:left;} H1, H2, H3, .h1, .h2, .h3 {     font-family: Arial, sans-serif !important;     mso-line-height-rule: exactly;     Margin: 0 0 15px 0;} H1, .h1 {font-size: 30px; line-height: 37px;} H2, .h2 {font-size: 24px; line-height: 30px;} H3, .h3 {font-size: 20px; line-height: 25px;} td, font {font-family: Arial, sans-serif !important;} a {font-family: Arial, sans-serif !important;} </style> <![endif]-->
+<!--[if gte mso 9]><xml> <o:OfficeDocumentSettings> <o:AllowPNG/> <o:PixelsPerInch>96</o:PixelsPerInch> </o:OfficeDocumentSettings> </xml><![endif]-->
+</head>
+
+   <body ALIGN="center" STYLE="text-align:center;margin:0 auto;padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;border-collapse: collapse;min-width:100%;background-color:#F3F4F5;">
+      <div ALIGN="center" CLASS="wrapper" STYLE="width:100%;margin:0 auto;table-layout:fixed;-webkit-text-size-adjust:100%;-ms-text-size-adjust:100%;background-color:#F3F4F5;">
+         <table WIDTH="100%" CELLPADDING="0" CELLSPACING="0" BORDER="0" STYLE="background-color:#F3F4F5;border-collapse: collapse;" BGCOLOR="#F3F4F5;">
+            <tr>
+               <td WIDTH="100%">
+                  <div CLASS="webkit" STYLE="max-width:600px;margin:0 auto;border-collapse: collapse;">
+                     <!--[if (gte mso 9)|(IE)]>                      <table width="600" align="center" cellpadding="0" cellspacing="0" border="0" style="border-spacing:0;border-collapse: collapse;margin:0 auto;" >                         <tr>                            <td style="padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;" >                               <![endif]-->
+                              <!-- ======= start main body ======= -->
+                              <table CLASS="outer" ALIGN="center" CELLPADDING="0" CELLSPACING="0" BORDER="0" STYLE="border-spacing:0;font-family: Arial, sans-serif, 'Roboto';color:#000000;Margin:0 auto;width:100%;max-width:600px;" BGCOLOR="#ffffff">
+                                 <tr>
+                                    <td STYLE="padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+
+<!-- =======EN Preheader======= -->
+<table BORDER="0" CELLSPACING="0" CELLPADDING="0" ALIGN="right" WIDTH="100%" BGCOLOR="#F3F4F5">
+<tr><td COLSPAN="2">
+<!--Call block: RBC_viewOnline_EN-->
+<table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><!-- =======EN Preheader======= -->
+<table border="0" width="100%" cellpadding="0" cellspacing="0" style="border-spacing:0; max-width: 800px; min-width: 400px;" bgcolor="#F3F4F5">
+   <tr>
+      <td style="background-color: #F3F4F5;" bgcolor="#F3F4F5">
+         <table width="100%" border="0" cellpadding="0" cellspacing="0" align="right" style="Margin:0 auto; min-height:50px;">
+            <tr>
+               <td class="view-online" align="right" valign="center" style="background-color: #F3F4F5;padding-top:10px;padding-bottom:10px;padding-left:0px;padding-right:10px;">
+                  <p class="view-online" bgcolor="#F3F4F5" style="font-family: 'Roboto', Arial, sans-serif; font-size: 12px; line-height:16px; mso-line-height-rule:exactly; text-decoration: undereline; color: #000000; text-align:right; font-style:normal;"> <a href="https://example.com title="View Online"  style="text-decoration:none; color: #000000; text-decoration: underline;"><strong>View Online</strong></a></p>
+               </td>
+            </tr>
+         </table>
+      </td>
+   </tr>
+</table>
+<!-- =======/EN Preheader======= --></td></tr></table>
+<!--/Call block: RBC_viewOnline_EN ends-->
+</td></tr>
+</table>
+<!-- =======/EN Preheader======= -->
+
+<!-- =======EN header======= -->
+<table BORDER="0" CELLSPACING="0" CELLPADDING="0" ALIGN="center" WIDTH="100%" BGCOLOR="#F3F4F5">
+<tr><td COLSPAN="2">
+<!--Call block: RBC_Clients_hdr-->
+<table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><!-- =======EN header======= -->
+<table border="0" width="100%" cellpadding="0" cellspacing="0" style="border-spacing:0; width:100% !important; min-width:100%;" bgcolor="#006AC3">
+<tr>
+<td style="background-color: #006AC3; width:100% !important; min-width:100%;" bgcolor="#006AC3">
+<table width="100%" border="0" cellpadding="0" cellspacing="0" align="left" style="Margin:0 auto;min-height:50px;">
+
+<tr>
+<!-- ======= logo ======= -->
+<td class="logo-image" align="left" valign="middle" style="padding-top:10px;padding-bottom:10px;padding-right:0;padding-left:20px;"><a href="https://example.com style="border: 0 !important;"><img src="https://example.com width="150" alt="RBC Royal Bank" style="border-width:0;width:100%;max-width:150px;height:auto;"></a></td>
+<!-- ======= end logo ======= -->
+</tr>
+
+</table>
+</td></tr></table>
+<!-- =======/EN header======= --></td></tr></table>
+<!--/Call block: RBC_Clients_hdr ends-->
+</td></tr>
+</table>
+<!-- =======/EN header======= -->
+
+<!-- =======introCopy======= -->
+<!--[if (gte mso 9)|(IE)]> <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-spacing:0;background-color: #ffffff;" bgcolor="#ffffff"> <tr> <td valign="middle" style="padding:0; mso-line-height-rule:exactly;" > <![endif]-->
+<table class="one-column" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-spacing:0;background-color: #ffffff;" bgcolor="#ffffff">
+<tr>
+<td style="padding-right: 30px; padding-left: 30px; padding-top: 30px; padding-bottom: 0px;"><p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height: 24px; mso-line-height-rule: exactly; text-decoration: none; color: #000000; text-align: left; font-style: normal; margin-bottom: 15px;">Hello,</p>
+  <p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:left;font-style:normal; margin-bottom: 15px;">
+      As requested, we&rsquo;re letting you know that your RBC Royal Bank credit card account ************1001  was credited for $840.72 on June 10, 2025 from SOME MERCHANT.</p>
+
+    <p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:left;font-style:normal; margin-bottom: 15px;">If you don&rsquo;t recognize this credit, please call us at 1&#8209;800&#8209;769&#8209;2512 (available 24/7) and we&rsquo;ll be happy to help.</p>
+</td>
+</tr>
+</table>
+<!-- =======/introCopy======= -->
+
+<!-- =======EN======= -->
+<!--[if (gte mso 9)|(IE)]> <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-spacing:0;background-color: #ffffff;" bgcolor="#ffffff"> <tr> <td valign="center" style="padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;mso-line-height-rule:exactly;text-align:left;" > <![endif]-->
+<table class="one-column" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-spacing:0;background-color: #ffffff;" bgcolor="#ffffff">
+<tr>
+<td>
+<!-- =======/chartTBL======= -->
+<!--[if (gte mso 9)|(IE)]> <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-spacing:0;"background-color: #ffffff;" bgcolor="#ffffff">                                                    <tr> <td valign="center" style="padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;mso-line-height-rule:exactly;" >                                                          <![endif]-->
+<table class="one-column" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-spacing:0;background-color: #ffffff;" bgcolor="#ffffff">
+                                                            <tr>
+<td width="100%" align="center" valign="center" bgcolor="#FFFFFF" style="padding-top:10px;padding-bottom:10px;">
+                                                                  <table style="border-spacing:0;mso-table-rspace:0pt;mso-table-lspace:0pt;border-collapse:collapse;margin-bottom:0;" width="90%" cellpadding="0" cellspacing="0" border="0" align="center">
+                                                                     <!--BOX-->
+                                                                     <tr>
+                                                                        <td align="center" width="100%">
+                                                                           <table width="100%">
+                                                                              <tr>
+                                                                                 <td align="center" style="border-collapse:collapse;background-color:#ffffff" width="100%">
+                                                                                    <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                                                                                       <tr>
+                                                                                          <td width="100%" align="left" valign="top" style="margin-right:0px;">
+                                                                                             <table width="100%" border="0" cellpadding="0" cellspacing="0">
+                                                                                                <!--row 1-->
+                                                                                                <tr>
+                                                                                                   <td style="padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;border-top:1px solid #70b2e6;border-bottom:1px solid #70b2e6;" align="center" width="100%" bgcolor="#ffffff">
+                                                                                                      <table height="30" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                                                         <tr>
+                                                                                                            <td width="40%" height="30" align="left" valign="middle" style="padding-right:5px;padding-left:5px;padding-top:5px; padding-bottom:5px;">
+                                                                                                               <p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:leftfont-style:normal;margin-bottom:0px;"><strong>Account</strong>:</p>
+                                                                                                            </td>
+                                                                                                            <td width="60%" align="left" valign="middle" style="padding-right:5px;padding-left:5px;padding-top:5px; padding-bottom:0px;">
+                                                                                                               <p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:left;font-style:normal;margin-bottom:5px;">************1001
+
+                                                                                                               </p>
+                                                                                                            </td>
+                                                                                                         </tr>
+                                                                                                      </table>
+                                                                                                   </td>
+                                                                                                </tr>
+                                                                                                <!--/row 1 ends-->
+<!--row 2-->
+                                                                                                <tr>
+<td style="padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;border-bottom:1px solid #70b2e6;" align="center" width="100%" bgcolor="#ffffff">
+                                                                                                      <table height="30" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                                                         <tr>
+<td width="40%" align="left" valign="middle" style="padding-right:5px;padding-left:5px;padding-top:5px; padding-bottom:5px;"><p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:leftfont-style:normal;margin-bottom:0px;"><strong>Purchase Amount</strong>:</p></td>
+<td width="60%" align="left" valign="middle" style="padding-right:5px;padding-left:5px;padding-top:5px; padding-bottom:0px;"><p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:left;font-style:normal;margin-bottom:5px;">$840.72</p></td>
+                                                                                                         </tr>
+                                                                                                      </table>
+                                                                                                   </td>
+                                                                                                </tr>
+<!--/row 2 ends-->
+                                                                                                <!--row 3-->
+                                                                                                <tr>
+                                                                                                   <td style="padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;border-bottom:1px solid #70b2e6;" align="center" width="100%" bgcolor="#ffffff">
+                                                                                                      <table height="30" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                                                         <tr>
+                                                                                                            <td width="40%" align="left" valign="middle" style="padding-right:5px;padding-left:5px;padding-top:5px; padding-bottom:5px;">
+                                                                                                               <p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:leftfont-style:normal;margin-bottom:0px;"><strong>Transaction Date</strong>:</p>
+                                                                                                            </td>
+                                                                                                            <td width="60%" align="left" valign="middle" style="padding-right:5px;padding-left:5px;padding-top:5px; padding-bottom:0px;">
+                                                                                                               <p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:left;font-style:normal;margin-bottom:5px;">June 10, 2025</p>
+                                                                                                            </td>
+                                                                                                         </tr>
+                                                                                                      </table>
+                                                                                                   </td>
+                                                                                                </tr>
+                                                                                                <!--/row 3 ends-->
+                                                                                                <!--row 4-->
+                                                                                                <tr>
+                                                                                                   <td style="padding-left:10px;padding-right:10px;padding-top:0px;padding-bottom:0px;border-bottom:1px solid #70b2e6;" align="center" width="100%" bgcolor="#ffffff">
+                                                                                                      <table height="30" width="100%" cellpadding="0" cellspacing="0" border="0">
+                                                                                                         <tr>
+                                                                                                            <td width="40%" align="left" valign="middle" style="padding-right:5px;padding-left:5px;padding-top:5px; padding-bottom:5px;">
+                                                                                                               <p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:leftfont-style:normal;margin-bottom:0px;"><strong>Transaction Description</strong>:</p>
+                                                                                                            </td>
+                                                                                                            <td width="60%" align="left" valign="middle" style="padding-right:5px;padding-left:5px;padding-top:5px; padding-bottom:0px;">
+                                                                                                               <p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:left;font-style:normal;margin-bottom:5px;">SOME MERCHANT</p>
+                                                                                                            </td>
+                                                                                                         </tr>
+                                                                                                      </table>
+                                                                                                   </td>
+                                                                                                </tr>
+                                                                                                <!--/row 4 ends-->
+
+                                                                                             </table>
+                                                                                          </td>
+                                                                                       </tr>
+                                                                                    </table>
+                                                                                 </td>
+                                                                              </tr>
+                                                                           </table>
+                                                                        </td>
+                                                                     </tr>
+                                                                     <!--/BOX ends-->
+                                                                  </table>
+                                                               </td>
+                                                            </tr>
+                                                         </table>
+<!--[if (gte mso 9)|(IE)]> </td> </tr> </table> <![endif]-->
+<!-- =======/chartTBL ends======= -->
+</td>
+</tr>
+
+</table>
+<!-- =======/EN======= -->
+
+                     <!-- =======Copy======= -->
+                     <!--[if (gte mso 9)|(IE)]>                      <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-spacing:0;" >                         <tr>                            <td valign="center" style="padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;mso-line-height-rule:exactly;text-align:left;" >                               <![endif]-->
+                              <table class="one-column" border="0" cellpadding="0" cellspacing="0" width="100%" style="border-spacing:0;background-color: #ffffff;" bgcolor="#ffffff">
+                                 <tr>
+                                    <td style="padding-right:30px;padding-left:30px;padding-top:20px;padding-bottom:0px;">
+                                       <p style="font-family: 'Roboto', Arial, sans-serif; font-size:16px; line-height:24px;mso-line-height-rule:exactly;text-decoration: none; color: #000000;text-align:left;font-style:normal;margin-bottom:15px;">Thank you!</p>
+                                    </td>
+                                 </tr>
+                              </table>
+                              <!-- =======/Copy======= -->
+
+<!-- ======= Spacer to center Footer ======= -->
+<!--[if (gte mso 9)|(IE)]> <table cellpadding="0" cellspacing="0" border="0" width="100%" style="border-spacing:0; background-color: #ffffff;" BGCOLOR="#ffffff"> <tr> <td> <![endif]-->
+<table CLASS="one-column" BORDER="0" CELLPADDING="0" CELLSPACING="0" WIDTH="100%" STYLE="border-spacing:0;background-color: #ffffff;" BGCOLOR="#ffffff">
+<tr>
+<td>&nbsp;<br>&nbsp;</td>
+</tr>
+</table>
+<!-- ======= /Spacer to center Footer ends ======= -->
+                                    </td>
+                                 </tr>
+                              </table>
+                              <!--[if (gte mso 9)|(IE)]>                            </td>                         </tr>                      </table>                      <![endif]-->
+<!-- =======footer======= -->
+                     <table CLASS="outer" ALIGN="center" CELLPADDING="0" CELLSPACING="0" BORDER="0" STYLE="border-spacing:0;Margin:0 auto;width:100%;max-width:600px;" BGCOLOR="#F3F4F5">
+                        <tr>
+                           <td STYLE="padding-top:0;padding-bottom:0;padding-right:0;padding-left:0;">
+<!--Privacy\Legal-->
+<table BORDER="0" CELLSPACING="0" CELLPADDING="0" ALIGN="center" WIDTH="100%" BGCOLOR="#F3F4F5">
+<tr><td COLSPAN="2">
+<!--Call block: Privacy\Legal-->
+<table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><!-- Separator3 -->
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="100%" bgcolor="#F3F4F5">
+<tr>
+<td height="1" style="font-size: 1px; color: #999999; mso-line-height-rule: exactly; line-height: 1px; border-top: 1px solid #999999; padding-bottom: 10px;">-</td>
+</tr>
+</table>
+<!-- /Separator3 ends -->
+
+<!-- Unsubscribe -->
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="100%" bgcolor="#F3F4F5">
+
+<tr>
+<td style="padding-left:20px;text-align:left;color: #006AC3; font-size: 12px; font-family: Arial, sans-serif; line-height: 18px;"><a href="https://example.com style="color:#006AC3; text-decoration:underline;" title="Privacy &amp; Security - opens in a new window" target="_blank" >Privacy &amp; Security</a> | <a href="https://example.com style="color:#006AC3; text-decoration:underline;" title="Legal - opens in a new window" target="_blank" >Legal</a> </td>
+</tr>
+</table>
+<!-- Unsubscribe -->
+
+<!-- Separator3 -->
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="100%" bgcolor="#F3F4F5">
+<tr>
+<td height="1" style="font-size: 1px; color: #999999; mso-line-height-rule: exactly; line-height: 1px; border-bottom: 1px solid #999999; padding-top: 10px;">-</td>
+</tr>
+</table>
+<!-- /Separator3 ends --></td></tr></table>
+<!--/Call block: /Privacy\Legal-->
+</td></tr>
+</table>
+<!--/Privacy\Legal-->
+
+<!-- ======= legalBugs ======= -->
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="100%" bgcolor="#F3F4F5">
+<tr>
+<td colspan="2" width="100%" valign="top" align="left" bgcolor="#F3F4F5" style="padding-left: 0px; padding-right: 0px; padding-top:20px; mso-line-height-rule:exactly; line-height:16px;"><table cellpadding="0" cellspacing="0" width="100%" role="presentation" style="min-width: 100%; " class="stylingblock-content-wrapper"><tr><td class="stylingblock-content-wrapper camarker-inner"><!-- ======= legalBugs ======= -->
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="100%" bgcolor="#F3F4F5">
+<tr>
+<td width="50" valign="top" align="left" bgcolor="#F3F4F5" style="padding-left:20px; padding-right:6px; padding-top: 20px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;">&nbsp;</p></td>
+  <td valign="top" align="left" style="padding-right:20px; padding-bottom:6px; padding-top: 20px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;">RBC Royal Bank | Royal Bank of Canada RBC WaterPark Place, 88 Queens Quay West, 12th Floor, Toronto, ON, M5J 0B8, Canada <a href="https://example.com style="color:#006ac3;text-decoration: underline;" title="rbcroyalbank.com"  target="_blank"><strong>www.rbcroyalbank.com</strong></a>.</p></td>
+</tr>
+<tr>
+<td width="50" valign="top" align="left" bgcolor="#F3F4F5" style="padding-left:20px; padding-right:6px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;">&reg;/TM</p></td>
+<td valign="top" align="left" style="padding-right:20px; padding-bottom:6px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;">Trademark(s) of Royal Bank of Canada. RBC and Royal Bank are registered trademarks of Royal Bank of Canada.</p></td>
+</tr>
+<tr>
+<td width="50" valign="top" align="left" bgcolor="#F3F4F5" style="padding-left:20px; padding-right:6px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px">&copy;</p></td>
+<td valign="top" align="left" style="padding-right:20px; padding-bottom:6px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;">Royal Bank of Canada 2025</p></td>
+</tr>
+<tr>
+<td style="padding: 5px 20px 5px 20px; mso-line-height-rule:exactly; line-height:16px" align="left" colspan="2">&nbsp;</td>
+</tr>
+</table>
+<!-- ======= /legalBugs ends ======= -->
+
+<!-- Separator1 -->
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="100%" bgcolor="#F3F4F5">
+<tr>
+<td height="1" style="font-size: 1px; color: #999999; mso-line-height-rule: exactly; line-height: 1px; border-top: 1px solid #999999;">-</td>
+</tr>
+</table>
+<!-- /Separator1 ends -->
+
+<!-- ======= legalBugs ======= -->
+<table border="0" cellspacing="0" cellpadding="0" align="center" width="100%" bgcolor="#F3F4F5">
+<tr>
+<td width="50" valign="top" align="left" bgcolor="#F3F4F5" style="padding-left:20px; padding-right:6px; padding-top: 20px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;">&nbsp;</p></td>
+<td valign="top" align="left" style="padding-right:20px; padding-bottom:6px; padding-top: 20px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;"><strong>Communicating Safely Online</strong></p></td>
+</tr>
+<tr>
+<td width="50" valign="top" align="left" bgcolor="#F3F4F5" style="padding-left:20px; padding-right:6px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;">&nbsp;</p></td>
+<td valign="top" align="left" style="padding-right:20px; padding-bottom:6px; mso-line-height-rule:exactly; line-height:16px;">
+<p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;">Regular, unencrypted email is not secure. You should never include personal or confidential information in a regular email. Be careful when opening messages, links or attachments received through digital channels, including regular emails, text messages and social media messages. If you receive a message that appears to be from RBC that is suspicious please report it to us and then delete it. Do not provide personal information like passwords.</p></td>
+</tr>
+<tr>
+<td width="50" valign="top" align="left" bgcolor="#F3F4F5" style="padding-left:20px; padding-right:6px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px">&nbsp;</p></td>
+<td valign="top" align="left" style="padding-right:20px; padding-bottom:6px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;"><strong>Need Help?</strong><br>
+To discuss your personal information with us safely, visit our <a href="https://example.com title="customer service - Link opens in a new window"  target="_blank" style="color:#006ac3; text-decoration:underline;"><strong>customer service</strong></a> page. Please note this email was sent from an unmonitored inbox. Do not reply.</p></td>
+</tr>
+<tr>
+<td width="50" valign="top" align="left" bgcolor="#F3F4F5" style="padding-left:20px; padding-right:6px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px">&nbsp;</p></td>
+<td valign="top" align="left" style="padding-right:20px; padding-bottom:6px; mso-line-height-rule:exactly; line-height:16px;"><p style="font-family:'Roboto', Arial, sans-serif; font-size:11px; color:#000000; mso-line-height-rule:exactly; line-height:16px;"><strong>For current scam alerts and tips to protect yourself visit</strong>:<br>
+<a href="https://example.com title="RBC Cyber Security - Link opens in a new window"  target="_blank" style="color:#006ac3; text-decoration:underline;"><strong>RBC Cyber Security</strong></a> | <a href="https://example.com title="Active Scam Alerts - Link opens in a new window"  target="_blank" style="color:#006ac3; text-decoration:underline;"><strong>Active Scam Alerts</strong></a></p></td>
+</tr>
+<tr>
+<td style="padding: 5px 20px 5px 20px; mso-line-height-rule:exactly; line-height:16px" align="left" colspan="2">&nbsp;</td>
+</tr>
+</table>
+<!-- ======= /legalBugs ends ======= --></td></tr></table></td>
+</tr>
+<tr>
+<td style="padding: 0;" align="left" colspan="2">&nbsp;</td>
+</tr>
+</table>
+<!-- ======= /legalBugs ends ======= -->
+
+                           </td>
+                        </tr>
+                     </table>
+                     <!--[if (gte mso 9)|(IE)]>                </td>             </tr>          </table>          <![endif]-->
+         <!-- =======/footer ends======= -->
+         </div>
+         </td></tr></table>
+      </div>
+      <img SRC="https://example.com WIDTH="1" HEIGHT="1">
+       <img src="https://example.com width="1" height="1" alt="">
+   </body>
+</html>

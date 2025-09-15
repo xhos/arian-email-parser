@@ -11,15 +11,23 @@ import (
 	"strings"
 )
 
-// DecodeEmailContent extracts plain text content from raw email data
-func DecodeEmailContent(raw []byte) (string, error) {
-	// Parse the email message
+// ParseMessage parses raw email data and returns both the message and plain text content
+func ParseMessage(raw []byte) (*mail.Message, string, error) {
 	msg, err := mail.ReadMessage(bytes.NewReader(raw))
 	if err != nil {
-		return "", fmt.Errorf("parsing email message: %w", err)
+		return nil, "", fmt.Errorf("parsing email message: %w", err)
 	}
 
-	// Get Content-Type header
+	content, err := extractTextContent(msg)
+	if err != nil {
+		return nil, "", fmt.Errorf("extracting text content: %w", err)
+	}
+
+	return msg, content, nil
+}
+
+// extractTextContent extracts plain text content from a mail message
+func extractTextContent(msg *mail.Message) (string, error) {
 	ct := msg.Header.Get("Content-Type")
 	if ct == "" {
 		// Simple text email, read body directly
@@ -55,9 +63,10 @@ func DecodeEmailContent(raw []byte) (string, error) {
 	return string(body), nil
 }
 
-// extractMultipartText walks through multipart email to find text/plain content
+// extractMultipartText walks through multipart email to find text content
 func extractMultipartText(body io.Reader, boundary string) (string, error) {
 	mr := multipart.NewReader(body, boundary)
+	var htmlContent string
 
 	for {
 		part, err := mr.NextPart()
@@ -69,8 +78,17 @@ func extractMultipartText(body io.Reader, boundary string) (string, error) {
 		}
 
 		partType := part.Header.Get("Content-Type")
+
+		// Prefer text/plain if available
 		if strings.HasPrefix(partType, "text/plain") {
 			return decodePart(part)
+		}
+
+		// Store HTML content as fallback
+		if strings.HasPrefix(partType, "text/html") {
+			if content, err := decodePart(part); err == nil {
+				htmlContent = content
+			}
 		}
 
 		// Handle nested multipart
@@ -87,7 +105,12 @@ func extractMultipartText(body io.Reader, boundary string) (string, error) {
 		}
 	}
 
-	return "", fmt.Errorf("no text/plain part found")
+	// If we have HTML content but no text/plain, use it
+	if htmlContent != "" {
+		return htmlContent, nil
+	}
+
+	return "", fmt.Errorf("no text/plain or text/html part found")
 }
 
 // decodePart reads and decodes a multipart section
@@ -104,39 +127,11 @@ func decodePart(part *multipart.Part) (string, error) {
 		return "", fmt.Errorf("decoding part: %w", err)
 	}
 
-	text := string(data)
-
-	// Clean up forwarded email format (remove "> " prefixes and extract forwarded content)
-	return cleanForwardedEmail(text), nil
+	return string(data), nil
 }
 
-// cleanForwardedEmail removes email forwarding artifacts and extracts the original content
-func cleanForwardedEmail(text string) string {
-	var lines []string
-
-	// Remove "> " prefixes from quoted content
-	for _, line := range strings.Split(text, "\n") {
-		trimmed := strings.TrimPrefix(line, "> ")
-		if strings.TrimSpace(trimmed) != "" {
-			lines = append(lines, trimmed)
-		}
-	}
-
-	clean := strings.Join(lines, "\n")
-
-	// Look for forwarded message marker and extract content after it
-	markers := []string{
-		"Forwarded Message",
-		"---------- Forwarded message",
-		"Begin forwarded message:",
-	}
-
-	for _, marker := range markers {
-		if idx := strings.Index(clean, marker); idx != -1 {
-			clean = clean[idx:]
-			break
-		}
-	}
-
-	return clean
+// DecodeEmailContent extracts plain text content from raw email data (legacy compatibility)
+func DecodeEmailContent(raw []byte) (string, error) {
+	_, content, err := ParseMessage(raw)
+	return content, err
 }

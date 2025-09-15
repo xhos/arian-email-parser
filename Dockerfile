@@ -27,7 +27,7 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     -X 'arian-email-parser/internal/version.BuildTime=${BUILD_TIME:-$(date -u +%Y%m%d-%H%M%S)}' \
     -X 'arian-email-parser/internal/version.GitCommit=${GIT_COMMIT:-dev}' \
     -X 'arian-email-parser/internal/version.GitBranch=${GIT_BRANCH:-main}'" \
-    -o /out/arian-email-parser ./cmd/main.go
+    -o /out/arian-email-parser ./cmd/server/main.go
 
 # ----- grpc_health_probe -------------------------------------------------------------------------
 FROM alpine:3.22.1 AS health-probe

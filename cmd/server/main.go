@@ -26,6 +26,12 @@ func main() {
 
 	logger.Info("starting email-parser", "version", version.FullVersion())
 
+	logger.Debug("debug is enabled")
+
+	if os.Getenv("SAVE_EML") != "" {
+		logger.Info("SAVE_EML is enabled, emails will be saved to disk")
+	}
+
 	// ----- api client -------------
 	apiClient, err := api.NewClient(cfg.AriandURL, "", cfg.APIKey)
 	if err != nil {
@@ -36,6 +42,13 @@ func main() {
 			logger.Error("failed to close gRPC connection", "err", err)
 		}
 	}()
+
+	// ----- connectivity check -----
+	logger.Info("checking ariand connectivity", "url", cfg.AriandURL)
+	if err := apiClient.Ping(); err != nil {
+		logger.Fatal("ariand not reachable", "err", err)
+	}
+	logger.Info("ariand connectivity confirmed")
 
 	// ----- services ---------------
 	handler := smtp.NewEmailHandler(apiClient, logger)

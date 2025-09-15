@@ -19,9 +19,9 @@ func (d *deposit) Match(m parser.EmailMeta) bool {
 
 func (d *deposit) Parse(m parser.EmailMeta) (*domain.Transaction, error) {
 	patterns := map[string]*regexp.Regexp{
-		"account": regexp.MustCompile(`Account:(?:\s*\n\s*>\s*\n\s*>\s*|\s*\n\s*>\s*\n\s*)([A-Za-z0-9 ]+)`),
-		"amount":  regexp.MustCompile(`Deposit Amount:(?:\s*\n\s*>\s*\n\s*>\s*|\s*\n\s*>\s*\n\s*)\$([\d,]+\.\d{2})`),
-		"txdate":  regexp.MustCompile(`Transaction Date:(?:\s*\n\s*>\s*\n\s*>\s*|\s*\n\s*>\s*\n\s*)([A-Za-z]+ \d{1,2}, \d{4})`),
+		"account": regexp.MustCompile(`bank account ([A-Za-z]+)`),
+		"amount":  regexp.MustCompile(`\$([0-9,]+\.\d{2})`),
+		"txdate":  regexp.MustCompile(`([A-Za-z]+ \d{1,2}, \d{4})`),
 	}
 	fields, err := parser.ExtractFields(m.Text, patterns)
 	if err != nil {
