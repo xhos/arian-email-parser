@@ -96,7 +96,7 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 		if acc.Name == "" {
 			continue
 		}
-		accountMap[fmt.Sprintf("%s-%s", acc.Bank, acc.Name)] = int(acc.Id)
+		accountMap[fmt.Sprintf("%s-%s", strings.ToLower(acc.Bank), acc.Name)] = int(acc.Id)
 	}
 
 	if err := h.resolveAccount(userUUID, txn, accountMap, user); err != nil {
@@ -160,7 +160,7 @@ func (h *EmailHandler) resolveAccount(userUUID string, txn *domain.Transaction, 
 	}
 
 	cleanAccount := strings.TrimLeft(txn.TxAccount, "*")
-	accountKey := fmt.Sprintf("%s-%s", txn.TxBank, cleanAccount)
+	accountKey := fmt.Sprintf("%s-%s", strings.ToLower(txn.TxBank), cleanAccount)
 
 	if existingAccountID, exists := accountMap[accountKey]; exists {
 		txn.AccountID = existingAccountID
