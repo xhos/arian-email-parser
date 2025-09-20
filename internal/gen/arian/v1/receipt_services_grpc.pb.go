@@ -52,7 +52,7 @@ type ReceiptServiceClient interface {
 	ParseReceipt(ctx context.Context, in *ParseReceiptRequest, opts ...grpc.CallOption) (*ParseReceiptResponse, error)
 	GetReceiptsByTransaction(ctx context.Context, in *GetReceiptsByTransactionRequest, opts ...grpc.CallOption) (*GetReceiptsByTransactionResponse, error)
 	SearchReceipts(ctx context.Context, in *SearchReceiptsRequest, opts ...grpc.CallOption) (*SearchReceiptsResponse, error)
-	// Receipt items management
+	// receipt items management
 	ListReceiptItems(ctx context.Context, in *ListReceiptItemsRequest, opts ...grpc.CallOption) (*ListReceiptItemsResponse, error)
 	GetReceiptItem(ctx context.Context, in *GetReceiptItemRequest, opts ...grpc.CallOption) (*GetReceiptItemResponse, error)
 	CreateReceiptItem(ctx context.Context, in *CreateReceiptItemRequest, opts ...grpc.CallOption) (*CreateReceiptItemResponse, error)
@@ -60,7 +60,7 @@ type ReceiptServiceClient interface {
 	DeleteReceiptItem(ctx context.Context, in *DeleteReceiptItemRequest, opts ...grpc.CallOption) (*DeleteReceiptItemResponse, error)
 	BulkCreateReceiptItems(ctx context.Context, in *BulkCreateReceiptItemsRequest, opts ...grpc.CallOption) (*BulkCreateReceiptItemsResponse, error)
 	DeleteReceiptItemsByReceipt(ctx context.Context, in *DeleteReceiptItemsByReceiptRequest, opts ...grpc.CallOption) (*DeleteReceiptItemsByReceiptResponse, error)
-	// Utility operations
+	// utility operations
 	GetUnlinkedReceipts(ctx context.Context, in *GetUnlinkedReceiptsRequest, opts ...grpc.CallOption) (*GetUnlinkedReceiptsResponse, error)
 	GetReceiptMatchCandidates(ctx context.Context, in *GetReceiptMatchCandidatesRequest, opts ...grpc.CallOption) (*GetReceiptMatchCandidatesResponse, error)
 }
@@ -266,7 +266,7 @@ type ReceiptServiceServer interface {
 	ParseReceipt(context.Context, *ParseReceiptRequest) (*ParseReceiptResponse, error)
 	GetReceiptsByTransaction(context.Context, *GetReceiptsByTransactionRequest) (*GetReceiptsByTransactionResponse, error)
 	SearchReceipts(context.Context, *SearchReceiptsRequest) (*SearchReceiptsResponse, error)
-	// Receipt items management
+	// receipt items management
 	ListReceiptItems(context.Context, *ListReceiptItemsRequest) (*ListReceiptItemsResponse, error)
 	GetReceiptItem(context.Context, *GetReceiptItemRequest) (*GetReceiptItemResponse, error)
 	CreateReceiptItem(context.Context, *CreateReceiptItemRequest) (*CreateReceiptItemResponse, error)
@@ -274,7 +274,7 @@ type ReceiptServiceServer interface {
 	DeleteReceiptItem(context.Context, *DeleteReceiptItemRequest) (*DeleteReceiptItemResponse, error)
 	BulkCreateReceiptItems(context.Context, *BulkCreateReceiptItemsRequest) (*BulkCreateReceiptItemsResponse, error)
 	DeleteReceiptItemsByReceipt(context.Context, *DeleteReceiptItemsByReceiptRequest) (*DeleteReceiptItemsByReceiptResponse, error)
-	// Utility operations
+	// utility operations
 	GetUnlinkedReceipts(context.Context, *GetUnlinkedReceiptsRequest) (*GetUnlinkedReceiptsResponse, error)
 	GetReceiptMatchCandidates(context.Context, *GetReceiptMatchCandidatesRequest) (*GetReceiptMatchCandidatesResponse, error)
 }
