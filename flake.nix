@@ -38,6 +38,8 @@
           go
 
           grpcurl
+          protoc-gen-go-grpc
+          protoc-gen-go
           buf
           air
           acme-sh
