@@ -58,6 +58,8 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 		return nil
 	}
 
+	h.Log.Debug("email content", "subject", meta.Subject, "text", meta.Text)
+
 	prsr := parser.Find(meta)
 	if prsr == nil {
 		h.Log.Info("no parser matched", "user_uuid", userUUID, "subject", meta.Subject)

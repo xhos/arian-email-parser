@@ -25,7 +25,9 @@ my bank does not have an api or any clean way for accessing my transactions (rbc
 | `LOG_LEVEL`   | log level (debug, info, warn)   | `info`   | [ ]        |
 | `TLS_CERT`    | tls certificate file path       |          | [ ]        |
 | `TLS_KEY`     | tls private key file path       |          | [ ]        |
-| `DEBUG`       | log email contents              |          | [ ]        |
+| `SAVE_EML`    | save incoming emails as .eml    | `false`  | [ ]        |
+
+- the `LOG_LEVEL=debug` env makes it so the incoming email contents are logged, which is useful for accepting forwarding rules
 
 ## setup
 
@@ -34,8 +36,7 @@ intended for use with docker compose, instructions are to be added later. #TODO
 ## development
 
 - i highly recommend to use `devenv` for a consistent development environment. it installs all necessary dependencies and provides helpers.
-
-- the `DEBUG=1` env make it so the incoming email contents are logged, which is useful for developing new parsers.
+- `SAVE_EML` is useful for developing new parsers, it saves incoming emails as `.eml` files in the `emails/` directory for later inspection.
 
 ### project structure
 
