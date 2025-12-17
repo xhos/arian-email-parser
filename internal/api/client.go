@@ -127,9 +127,8 @@ func (c *Client) CreateAccount(userID, name, bank string) (*pb.Account, error) {
 func (c *Client) CreateTransaction(userID string, tx *domain.Transaction) error {
 	ctx := c.withAuth(context.Background())
 
-	// convert domain transaction to gRPC request
-	req := &pb.CreateTransactionRequest{
-		UserId:    userID,
+	// convert domain transaction to TransactionInput
+	txInput := &pb.TransactionInput{
 		AccountId: int64(tx.AccountID),
 		TxDate:    timestamppb.New(tx.TxDate),
 		TxAmount: &money.Money{
@@ -142,13 +141,19 @@ func (c *Client) CreateTransaction(userID string, tx *domain.Transaction) error 
 
 	// Optional fields
 	if tx.TxDesc != "" {
-		req.Description = &tx.TxDesc
+		txInput.Description = &tx.TxDesc
 	}
 	if tx.Merchant != "" {
-		req.Merchant = &tx.Merchant
+		txInput.Merchant = &tx.Merchant
 	}
 	if tx.UserNotes != "" {
-		req.UserNotes = &tx.UserNotes
+		txInput.UserNotes = &tx.UserNotes
+	}
+
+	// create bulk request with single transaction
+	req := &pb.CreateTransactionRequest{
+		UserId:       userID,
+		Transactions: []*pb.TransactionInput{txInput},
 	}
 
 	resp, err := c.txClient.CreateTransaction(ctx, req)
@@ -161,7 +166,11 @@ func (c *Client) CreateTransaction(userID string, tx *domain.Transaction) error 
 		return fmt.Errorf("failed to create transaction: %w", err)
 	}
 
-	c.log.Info("transaction created successfully", "email_id", tx.EmailID, "tx_id", resp.Transaction.Id)
+	if len(resp.Transactions) > 0 {
+		c.log.Info("transaction created successfully", "email_id", tx.EmailID, "tx_id", resp.Transactions[0].Id)
+	} else {
+		c.log.Info("transaction request completed", "email_id", tx.EmailID, "created_count", resp.CreatedCount)
+	}
 	return nil
 }
 
