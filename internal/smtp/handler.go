@@ -7,6 +7,7 @@ import (
 	_ "arian-parser/internal/email/all"
 	pb "arian-parser/internal/gen/arian/v1"
 	"arian-parser/internal/parser"
+	"bufio"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -101,7 +102,13 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 		accountMap[fmt.Sprintf("%s-%s", strings.ToLower(acc.Bank), acc.Name)] = int(acc.Id)
 	}
 
-	if err := h.resolveAccount(userUUID, txn, accountMap, user); err != nil {
+	accountMappings, err := loadAccountMappings()
+	if err != nil {
+		h.Log.Error("failed to load account mappings", "err", err)
+		return nil
+	}
+
+	if err := h.resolveAccount(userUUID, txn, accountMap, accountMappings, user); err != nil {
 		return err
 	}
 
@@ -148,7 +155,7 @@ func (h *EmailHandler) saveEmailToFile(userUUID, from string, data []byte) error
 	return nil
 }
 
-func (h *EmailHandler) resolveAccount(userUUID string, txn *domain.Transaction, accountMap map[string]int, user *pb.User) error {
+func (h *EmailHandler) resolveAccount(userUUID string, txn *domain.Transaction, accountMap map[string]int, accountMappings map[string]string, user *pb.User) error {
 	noAccountParsed := txn.TxAccount == ""
 	noDefaultAccount := user.GetDefaultAccountId() <= 0
 
@@ -162,6 +169,12 @@ func (h *EmailHandler) resolveAccount(userUUID string, txn *domain.Transaction, 
 	}
 
 	cleanAccount := strings.TrimLeft(txn.TxAccount, "*")
+
+	if mappedAccount, exists := accountMappings[cleanAccount]; exists {
+		h.Log.Debug("applying account mapping", "statement_account", cleanAccount, "arian_account", mappedAccount)
+		cleanAccount = mappedAccount
+	}
+
 	accountKey := fmt.Sprintf("%s-%s", strings.ToLower(txn.TxBank), cleanAccount)
 
 	if existingAccountID, exists := accountMap[accountKey]; exists {
@@ -197,4 +210,51 @@ func sanitizeFilename(subject string) string {
 	}
 
 	return sanitized
+}
+
+// loadAccountMappings reads account-mappings.txt and returns a map of statement_account -> arian_account
+func loadAccountMappings() (map[string]string, error) {
+	mappings := make(map[string]string)
+
+	file, err := os.Open("account-mappings.txt")
+	if err != nil {
+		if os.IsNotExist(err) {
+			return mappings, nil // no mappings file is fine
+		}
+		return nil, fmt.Errorf("failed to open account-mappings.txt: %w", err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	lineNum := 0
+	for scanner.Scan() {
+		lineNum++
+		line := strings.TrimSpace(scanner.Text())
+
+		// Skip empty lines and comments
+		if line == "" || strings.HasPrefix(line, "#") {
+			continue
+		}
+
+		// Parse "statement_account: arian_account"
+		parts := strings.SplitN(line, ":", 2)
+		if len(parts) != 2 {
+			return nil, fmt.Errorf("invalid mapping at line %d: expected 'statement_account: arian_account', got %q", lineNum, line)
+		}
+
+		statementAccount := strings.TrimSpace(parts[0])
+		arianAccount := strings.TrimSpace(parts[1])
+
+		if statementAccount == "" || arianAccount == "" {
+			return nil, fmt.Errorf("invalid mapping at line %d: both accounts must be non-empty", lineNum)
+		}
+
+		mappings[statementAccount] = arianAccount
+	}
+
+	if err := scanner.Err(); err != nil {
+		return nil, fmt.Errorf("error reading account-mappings.txt: %w", err)
+	}
+
+	return mappings, nil
 }
