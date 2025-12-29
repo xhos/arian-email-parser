@@ -33,9 +33,11 @@ my bank does not have an api or any clean way for accessing my transactions (rbc
 
 intended for use with docker compose, instructions are to be added later. #TODO
 
+most email providers, when you set up forwarding, require you to confirm it by clicking a link in the email. you can see the contents of the emails by either setting `SAVE_EML` or simply setting `LOG_LEVEL` to `debug`, that will print all the incoming email contents to logs. this is, of course, intended for one-time forwarding setup, not constant use.
+
 ## development
 
-- i highly recommend to use `devenv` for a consistent development environment. it installs all necessary dependencies and provides helpers.
+- I highly recommend to use `devenv` for a consistent development environment. it installs all necessary dependencies and provides helpers.
 - `SAVE_EML` is useful for developing new parsers, it saves incoming emails as `.eml` files in the `emails/` directory for later inspection.
 
 ### project structure
