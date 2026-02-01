@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"os"
 
-	"arian-parser/internal/domain"
-	pb "arian-parser/internal/gen/arian/v1"
+	"null-email-parser/internal/domain"
+	pb "null-email-parser/internal/gen/null/v1"
 
 	"github.com/charmbracelet/log"
 	"google.golang.org/genproto/googleapis/type/money"
@@ -29,8 +29,8 @@ type Client struct {
 	log           *log.Logger
 }
 
-func NewClient(ariandURL, _, authToken string) (*Client, error) {
-	conn, err := grpc.NewClient(ariandURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
+func NewClient(nullCoreURL, _, authToken string) (*Client, error) {
+	conn, err := grpc.NewClient(nullCoreURL, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	if err != nil {
 		return nil, fmt.Errorf("failed to connect to gRPC server: %w", err)
 	}
@@ -54,14 +54,14 @@ func (c *Client) Ping() error {
 	ctx := context.Background()
 
 	resp, err := c.healthClient.Check(ctx, &grpc_health_v1.HealthCheckRequest{
-		Service: "arian.v1.UserService",
+		Service: "null.v1.UserService",
 	})
 	if err != nil {
-		return fmt.Errorf("failed to ping ariand: %w", err)
+		return fmt.Errorf("failed to ping null-core: %w", err)
 	}
 
 	if resp.Status != grpc_health_v1.HealthCheckResponse_SERVING {
-		return fmt.Errorf("ariand service not healthy: %s", resp.Status)
+		return fmt.Errorf("null-core service not healthy: %s", resp.Status)
 	}
 
 	return nil

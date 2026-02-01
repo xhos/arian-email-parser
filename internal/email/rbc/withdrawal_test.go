@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"arian-parser/internal/domain"
+	"null-email-parser/internal/domain"
 )
 
 func TestWithdrawalParser(t *testing.T) {

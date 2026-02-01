@@ -6,11 +6,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"arian-parser/internal/api"
-	"arian-parser/internal/config"
-	"arian-parser/internal/grpc"
-	"arian-parser/internal/smtp"
-	"arian-parser/internal/version"
+	"null-email-parser/internal/api"
+	"null-email-parser/internal/config"
+	"null-email-parser/internal/grpc"
+	"null-email-parser/internal/smtp"
+	"null-email-parser/internal/version"
 
 	"github.com/charmbracelet/log"
 )
@@ -33,7 +33,7 @@ func main() {
 	}
 
 	// ----- api client -------------
-	apiClient, err := api.NewClient(cfg.AriandURL, "", cfg.APIKey)
+	apiClient, err := api.NewClient(cfg.NullCoreURL, "", cfg.APIKey)
 	if err != nil {
 		logger.Fatal("api client init", "err", err)
 	}
@@ -44,11 +44,11 @@ func main() {
 	}()
 
 	// ----- connectivity check -----
-	logger.Info("checking ariand connectivity", "url", cfg.AriandURL)
+	logger.Info("checking null-core connectivity", "url", cfg.NullCoreURL)
 	if err := apiClient.Ping(); err != nil {
-		logger.Fatal("ariand not reachable", "err", err)
+		logger.Fatal("null-core not reachable", "err", err)
 	}
-	logger.Info("ariand connectivity confirmed")
+	logger.Info("null-core connectivity confirmed")
 
 	// ----- services ---------------
 	handler := smtp.NewEmailHandler(apiClient, logger)

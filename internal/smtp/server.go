@@ -45,7 +45,7 @@ func (s *Server) Start(ctx context.Context) error {
 	s.smtpServer = &smtpd.Server{
 		Addr:     s.addr,
 		Handler:  s.mailHandler,
-		Appname:  "arian-parser",
+		Appname:  "null-email-parser",
 		Hostname: s.domain,
 	}
 

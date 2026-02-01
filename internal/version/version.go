@@ -9,8 +9,8 @@ const (
 	Major    = 0
 	Minor    = 3
 	Patch    = 0
-	RepoName = "arian-email-parser"
-	RepoURL  = "https://github.com/xhos/arian-email-parser"
+	RepoName = "null-email-parser"
+	RepoURL  = "https://github.com/xhos/null-email-parser"
 )
 
 var (

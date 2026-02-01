@@ -9,9 +9,9 @@ import (
 )
 
 type Config struct {
-	AriandURL string // ariand service URL
-	APIKey    string // internal API key for authenticating requests
-	Domain    string // domain for the SMTP server
+	NullCoreURL string // null-core service URL
+	APIKey      string // internal API key for authenticating requests
+	Domain      string // domain for the SMTP server
 
 	SMTPAddress string // SMTP server address
 	GRPCAddress string // gRPC server address
@@ -45,9 +45,9 @@ func Load() Config {
 
 	flag.Parse()
 
-	ariandURL := os.Getenv("ARIAND_URL")
-	if ariandURL == "" {
-		panic("ARIAND_URL environment variable is required")
+	nullCoreURL := os.Getenv("NULL_CORE_URL")
+	if nullCoreURL == "" {
+		panic("NULL_CORE_URL environment variable is required")
 	}
 
 	apiKey := os.Getenv("API_KEY")
@@ -66,7 +66,7 @@ func Load() Config {
 	}
 
 	return Config{
-		AriandURL:   ariandURL,
+		NullCoreURL: nullCoreURL,
 		APIKey:      apiKey,
 		Domain:      domain,
 		SMTPAddress: parseAddress(*smtpAddress),

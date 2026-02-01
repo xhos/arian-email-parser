@@ -1,14 +1,14 @@
 package smtp
 
 import (
-	"arian-parser/internal/api"
-	"arian-parser/internal/domain"
-	"arian-parser/internal/email"
-	_ "arian-parser/internal/email/all"
-	pb "arian-parser/internal/gen/arian/v1"
-	"arian-parser/internal/parser"
 	"bufio"
 	"fmt"
+	"null-email-parser/internal/api"
+	"null-email-parser/internal/domain"
+	"null-email-parser/internal/email"
+	_ "null-email-parser/internal/email/all"
+	pb "null-email-parser/internal/gen/null/v1"
+	"null-email-parser/internal/parser"
 	"os"
 	"path/filepath"
 	"strings"
@@ -157,21 +157,16 @@ func (h *EmailHandler) saveEmailToFile(userUUID, from string, data []byte) error
 
 func (h *EmailHandler) resolveAccount(userUUID string, txn *domain.Transaction, accountMap map[string]int, accountMappings map[string]string, user *pb.User) error {
 	noAccountParsed := txn.TxAccount == ""
-	noDefaultAccount := user.GetDefaultAccountId() <= 0
 
 	if noAccountParsed {
-		if noDefaultAccount {
-			h.Log.Warn("no account parsed and no default set; skipping", "user_uuid", userUUID)
-			return nil
-		}
-		txn.AccountID = int(user.GetDefaultAccountId())
+		h.Log.Warn("no account parsed from email; skipping transaction", "user_uuid", userUUID)
 		return nil
 	}
 
 	cleanAccount := strings.TrimLeft(txn.TxAccount, "*")
 
 	if mappedAccount, exists := accountMappings[cleanAccount]; exists {
-		h.Log.Debug("applying account mapping", "statement_account", cleanAccount, "arian_account", mappedAccount)
+		h.Log.Debug("applying account mapping", "statement_account", cleanAccount, "null_account", mappedAccount)
 		cleanAccount = mappedAccount
 	}
 
@@ -212,7 +207,7 @@ func sanitizeFilename(subject string) string {
 	return sanitized
 }
 
-// loadAccountMappings reads account-mappings.txt and returns a map of statement_account -> arian_account
+// loadAccountMappings reads account-mappings.txt and returns a map of statement_account -> null_account
 func loadAccountMappings() (map[string]string, error) {
 	mappings := make(map[string]string)
 
@@ -236,20 +231,20 @@ func loadAccountMappings() (map[string]string, error) {
 			continue
 		}
 
-		// Parse "statement_account: arian_account"
+		// Parse "statement_account: null_account"
 		parts := strings.SplitN(line, ":", 2)
 		if len(parts) != 2 {
-			return nil, fmt.Errorf("invalid mapping at line %d: expected 'statement_account: arian_account', got %q", lineNum, line)
+			return nil, fmt.Errorf("invalid mapping at line %d: expected 'statement_account: null_account', got %q", lineNum, line)
 		}
 
 		statementAccount := strings.TrimSpace(parts[0])
-		arianAccount := strings.TrimSpace(parts[1])
+		nullAccount := strings.TrimSpace(parts[1])
 
-		if statementAccount == "" || arianAccount == "" {
+		if statementAccount == "" || nullAccount == "" {
 			return nil, fmt.Errorf("invalid mapping at line %d: both accounts must be non-empty", lineNum)
 		}
 
-		mappings[statementAccount] = arianAccount
+		mappings[statementAccount] = nullAccount
 	}
 
 	if err := scanner.Err(); err != nil {

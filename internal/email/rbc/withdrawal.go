@@ -4,8 +4,8 @@ import (
 	"regexp"
 	"strings"
 
-	"arian-parser/internal/domain"
-	"arian-parser/internal/parser"
+	"null-email-parser/internal/domain"
+	"null-email-parser/internal/parser"
 )
 
 func init() { parser.Register(&withdrawal{}) }

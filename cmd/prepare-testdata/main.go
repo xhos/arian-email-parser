@@ -10,7 +10,7 @@ import (
 	"regexp"
 	"strings"
 
-	"arian-parser/internal/email"
+	"null-email-parser/internal/email"
 
 	"github.com/charmbracelet/log"
 )

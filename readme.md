@@ -1,10 +1,10 @@
-# arian-email-parser
+# null-email-parser
 
-arian-parser is designed to parse bank transactions from emails. it just runs an smtp server, so you are expected to set up forwarding rules in the email client. the parser extracts relevant transaction information using bank-specific parsers, and sends over the data to [ariand](https://github.com/xhos/ariand). however the structure of the parser itself is largely decoupled from arian so if you want to send data elsewhere i recon you can do that too with a bit of effort.
+null-email-parser is a way to automaticly ingest emails into [null-core](https://github.com/xhos/null-core) from emails. It just runs as an smtp server, so you are expected to set up forwarding rules in your email client to pipe the bank email here. The parser extracts relevant transaction information using bank-specific parsers, and sends over the data to [null-core](https://github.com/xhos/null-core), the backend.
 
 ## why?
 
-my bank does not have an api or any clean way for accessing my transactions (rbc im looking at you). sometimes they offer csv exports, but those for some reason don't have half the transactions i need, and it's not automatic anyways. so here we are, parsing emails to get the data we need. like cavemen.
+Some banks do not have an API or any clean way for accessing transactions (RBC, I'm looking at you). Sometimes they offer csv exports, but those for some reason don't have half the transactions, and it's not automatic anyways. So here we are, parsing emails to get the data we need. Like cavemen.
 
 ## ⚙️ config
 
@@ -17,11 +17,11 @@ my bank does not have an api or any clean way for accessing my transactions (rbc
 
 ### environment variables
 
-| variable      | description                     | default  | required?  |
-|---------------|---------------------------------|----------|------------|
-| `API_KEY`     | authentication key for ariand   |          | [x]        |
-| `ARIAND_URL`  | ariand grpc service url         |          | [x]        |
-| `DOMAIN`      | email domain to serve           |          | [x]        |
+| variable          | description                     | default  | required?  |
+|-------------------|---------------------------------|----------|------------|
+| `API_KEY`         | authentication key for null-core|          | [x]        |
+| `NULL_CORE_URL`   | null-core backend url           |          | [x]        |
+| `DOMAIN`          | email domain to serve           |          | [x]        |
 | `LOG_LEVEL`   | log level (debug, info, warn)   | `info`   | [ ]        |
 | `TLS_CERT`    | tls certificate file path       |          | [ ]        |
 | `TLS_KEY`     | tls private key file path       |          | [ ]        |
@@ -68,14 +68,9 @@ contributions are highly welcome, as it's not feasible for me to cover banks I d
 
 ## 🌱 ecosystem
 
-
-```definition
-arian (n.) /ˈarjan/ [Welsh] Silver; money; wealth.  
-```
-
-- [ariand](https://github.com/xhos/ariand) - main backend service
-- [arian-web](https://github.com/xhos/arian-web) - frontend web application
-- [arian-mobile](https://github.com/xhos/arian-mobile) - mobile appplication
-- [arian-protos](https://github.com/xhos/arian-protos) - shared protobuf definitions
-- [arian-receipts](https://github.com/xhos/arian-receipts) - receipt parsing microservice
-- [arian-email-parser](https://github.com/xhos/arian-email-parser) - email parsing service
+- [null-core](https://github.com/xhos/null-core) - main backend service
+- [null-web](https://github.com/xhos/null-web) - frontend web application
+- [null-mobile](https://github.com/xhos/null-mobile) - mobile appplication
+- [null-protos](https://github.com/xhos/null-protos) - shared protobuf definitions
+- [null-receipts](https://github.com/xhos/null-receipts) - receipt parsing microservice
+- [null-email-parser](https://github.com/xhos/null-email-parser) - email parsing service

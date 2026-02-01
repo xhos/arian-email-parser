@@ -1,4 +1,4 @@
-module arian-parser
+module null-email-parser
 
 go 1.24.2
 

@@ -6,9 +6,9 @@ import (
 	"testing"
 	"time"
 
-	"arian-parser/internal/domain"
-	"arian-parser/internal/email"
-	"arian-parser/internal/parser"
+	"null-email-parser/internal/domain"
+	"null-email-parser/internal/email"
+	"null-email-parser/internal/parser"
 )
 
 type expectedTransactionDetails struct {

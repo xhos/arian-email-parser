@@ -1,6 +1,6 @@
 package all
 
 import (
-	_ "arian-parser/internal/email/rbc"
+	_ "null-email-parser/internal/email/rbc"
 	// new parsers should be added here
 )

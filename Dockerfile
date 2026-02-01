@@ -24,10 +24,10 @@ RUN --mount=type=cache,target=/go/pkg/mod \
     --mount=type=cache,target=/root/.cache/go-build \
     CGO_ENABLED=0 GOOS=${TARGETOS:-linux} GOARCH=${TARGETARCH:-amd64} \
     go build -trimpath -ldflags="-s -w \
-    -X 'arian-email-parser/internal/version.BuildTime=${BUILD_TIME:-$(date -u +%Y%m%d-%H%M%S)}' \
-    -X 'arian-email-parser/internal/version.GitCommit=${GIT_COMMIT:-dev}' \
-    -X 'arian-email-parser/internal/version.GitBranch=${GIT_BRANCH:-main}'" \
-    -o /out/arian-email-parser ./cmd/server/main.go
+    -X 'null-email-parser/internal/version.BuildTime=${BUILD_TIME:-$(date -u +%Y%m%d-%H%M%S)}' \
+    -X 'null-email-parser/internal/version.GitCommit=${GIT_COMMIT:-dev}' \
+    -X 'null-email-parser/internal/version.GitBranch=${GIT_BRANCH:-main}'" \
+    -o /out/null-email-parser ./cmd/server/main.go
 
 # ----- grpc_health_probe -------------------------------------------------------------------------
 FROM alpine:3.22.1 AS health-probe
@@ -41,13 +41,13 @@ RUN apk add --no-cache curl && \
     -o /grpc_health_probe && \
     chmod +x /grpc_health_probe
 
-# ----- runtime ----------------------------------------------------------------------------------- 
+# ----- runtime -----------------------------------------------------------------------------------
 FROM alpine:3.22.1
 
 # metadata
-LABEL org.opencontainers.image.title="arian-email-parser" \
+LABEL org.opencontainers.image.title="null-email-parser" \
       org.opencontainers.image.description="SMTP to gRPC email parser" \
-      org.opencontainers.image.source="https://github.com/xhos/arian-email-parser"
+      org.opencontainers.image.source="https://github.com/xhos/null-email-parser"
 
 # runtime dependencies
 RUN apk add --no-cache ca-certificates tzdata openssl && \
@@ -57,7 +57,7 @@ RUN apk add --no-cache ca-certificates tzdata openssl && \
     chown -R app:app /certs /app
 
 # copy binaries
-COPY --from=builder --chown=app:app /out/arian-email-parser /app/arian-email-parser
+COPY --from=builder --chown=app:app /out/null-email-parser /app/null-email-parser
 COPY --from=health-probe --chown=app:app /grpc_health_probe /usr/local/bin/grpc_health_probe
 
 # environment defaults
@@ -77,4 +77,4 @@ EXPOSE 25 50053
 HEALTHCHECK --interval=30s --timeout=5s --start-period=20s --retries=3 \
     CMD ["/usr/local/bin/grpc_health_probe", "-addr=:50053"]
 
-ENTRYPOINT ["/app/arian-email-parser"]
+ENTRYPOINT ["/app/null-email-parser"]

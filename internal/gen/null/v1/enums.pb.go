@@ -2,9 +2,9 @@
 // versions:
 // 	protoc-gen-go v1.36.10
 // 	protoc        (unknown)
-// source: arian/v1/enums.proto
+// source: null/v1/enums.proto
 
-package arianv1
+package nullv1
 
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
@@ -63,11 +63,11 @@ func (x AccountType) String() string {
 }
 
 func (AccountType) Descriptor() protoreflect.EnumDescriptor {
-	return file_arian_v1_enums_proto_enumTypes[0].Descriptor()
+	return file_null_v1_enums_proto_enumTypes[0].Descriptor()
 }
 
 func (AccountType) Type() protoreflect.EnumType {
-	return &file_arian_v1_enums_proto_enumTypes[0]
+	return &file_null_v1_enums_proto_enumTypes[0]
 }
 
 func (x AccountType) Number() protoreflect.EnumNumber {
@@ -76,7 +76,7 @@ func (x AccountType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use AccountType.Descriptor instead.
 func (AccountType) EnumDescriptor() ([]byte, []int) {
-	return file_arian_v1_enums_proto_rawDescGZIP(), []int{0}
+	return file_null_v1_enums_proto_rawDescGZIP(), []int{0}
 }
 
 type TransactionDirection int32
@@ -112,11 +112,11 @@ func (x TransactionDirection) String() string {
 }
 
 func (TransactionDirection) Descriptor() protoreflect.EnumDescriptor {
-	return file_arian_v1_enums_proto_enumTypes[1].Descriptor()
+	return file_null_v1_enums_proto_enumTypes[1].Descriptor()
 }
 
 func (TransactionDirection) Type() protoreflect.EnumType {
-	return &file_arian_v1_enums_proto_enumTypes[1]
+	return &file_null_v1_enums_proto_enumTypes[1]
 }
 
 func (x TransactionDirection) Number() protoreflect.EnumNumber {
@@ -125,7 +125,7 @@ func (x TransactionDirection) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use TransactionDirection.Descriptor instead.
 func (TransactionDirection) EnumDescriptor() ([]byte, []int) {
-	return file_arian_v1_enums_proto_rawDescGZIP(), []int{1}
+	return file_null_v1_enums_proto_rawDescGZIP(), []int{1}
 }
 
 type PeriodType int32
@@ -136,6 +136,10 @@ const (
 	PeriodType_PERIOD_TYPE_30_DAYS     PeriodType = 2
 	PeriodType_PERIOD_TYPE_90_DAYS     PeriodType = 3
 	PeriodType_PERIOD_TYPE_CUSTOM      PeriodType = 4
+	PeriodType_PERIOD_TYPE_3_MONTHS    PeriodType = 5
+	PeriodType_PERIOD_TYPE_6_MONTHS    PeriodType = 6
+	PeriodType_PERIOD_TYPE_1_YEAR      PeriodType = 7
+	PeriodType_PERIOD_TYPE_ALL_TIME    PeriodType = 8
 )
 
 // Enum value maps for PeriodType.
@@ -146,6 +150,10 @@ var (
 		2: "PERIOD_TYPE_30_DAYS",
 		3: "PERIOD_TYPE_90_DAYS",
 		4: "PERIOD_TYPE_CUSTOM",
+		5: "PERIOD_TYPE_3_MONTHS",
+		6: "PERIOD_TYPE_6_MONTHS",
+		7: "PERIOD_TYPE_1_YEAR",
+		8: "PERIOD_TYPE_ALL_TIME",
 	}
 	PeriodType_value = map[string]int32{
 		"PERIOD_TYPE_UNSPECIFIED": 0,
@@ -153,6 +161,10 @@ var (
 		"PERIOD_TYPE_30_DAYS":     2,
 		"PERIOD_TYPE_90_DAYS":     3,
 		"PERIOD_TYPE_CUSTOM":      4,
+		"PERIOD_TYPE_3_MONTHS":    5,
+		"PERIOD_TYPE_6_MONTHS":    6,
+		"PERIOD_TYPE_1_YEAR":      7,
+		"PERIOD_TYPE_ALL_TIME":    8,
 	}
 )
 
@@ -167,11 +179,11 @@ func (x PeriodType) String() string {
 }
 
 func (PeriodType) Descriptor() protoreflect.EnumDescriptor {
-	return file_arian_v1_enums_proto_enumTypes[2].Descriptor()
+	return file_null_v1_enums_proto_enumTypes[2].Descriptor()
 }
 
 func (PeriodType) Type() protoreflect.EnumType {
-	return &file_arian_v1_enums_proto_enumTypes[2]
+	return &file_null_v1_enums_proto_enumTypes[2]
 }
 
 func (x PeriodType) Number() protoreflect.EnumNumber {
@@ -180,7 +192,7 @@ func (x PeriodType) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use PeriodType.Descriptor instead.
 func (PeriodType) EnumDescriptor() ([]byte, []int) {
-	return file_arian_v1_enums_proto_rawDescGZIP(), []int{2}
+	return file_null_v1_enums_proto_rawDescGZIP(), []int{2}
 }
 
 type Granularity int32
@@ -219,11 +231,11 @@ func (x Granularity) String() string {
 }
 
 func (Granularity) Descriptor() protoreflect.EnumDescriptor {
-	return file_arian_v1_enums_proto_enumTypes[3].Descriptor()
+	return file_null_v1_enums_proto_enumTypes[3].Descriptor()
 }
 
 func (Granularity) Type() protoreflect.EnumType {
-	return &file_arian_v1_enums_proto_enumTypes[3]
+	return &file_null_v1_enums_proto_enumTypes[3]
 }
 
 func (x Granularity) Number() protoreflect.EnumNumber {
@@ -232,14 +244,14 @@ func (x Granularity) Number() protoreflect.EnumNumber {
 
 // Deprecated: Use Granularity.Descriptor instead.
 func (Granularity) EnumDescriptor() ([]byte, []int) {
-	return file_arian_v1_enums_proto_rawDescGZIP(), []int{3}
+	return file_null_v1_enums_proto_rawDescGZIP(), []int{3}
 }
 
-var File_arian_v1_enums_proto protoreflect.FileDescriptor
+var File_null_v1_enums_proto protoreflect.FileDescriptor
 
-const file_arian_v1_enums_proto_rawDesc = "" +
+const file_null_v1_enums_proto_rawDesc = "" +
 	"\n" +
-	"\x14arian/v1/enums.proto\x12\barian.v1*\x95\x01\n" +
+	"\x13null/v1/enums.proto\x12\anull.v1*\x95\x01\n" +
 	"\vAccountType\x12\x17\n" +
 	"\x13ACCOUNT_UNSPECIFIED\x10\x00\x12\x14\n" +
 	"\x10ACCOUNT_CHEQUING\x10\x01\x12\x13\n" +
@@ -250,42 +262,46 @@ const file_arian_v1_enums_proto_rawDesc = "" +
 	"\x14TransactionDirection\x12\x19\n" +
 	"\x15DIRECTION_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12DIRECTION_INCOMING\x10\x01\x12\x16\n" +
-	"\x12DIRECTION_OUTGOING\x10\x02*\x8b\x01\n" +
+	"\x12DIRECTION_OUTGOING\x10\x02*\xf1\x01\n" +
 	"\n" +
 	"PeriodType\x12\x1b\n" +
 	"\x17PERIOD_TYPE_UNSPECIFIED\x10\x00\x12\x16\n" +
 	"\x12PERIOD_TYPE_7_DAYS\x10\x01\x12\x17\n" +
 	"\x13PERIOD_TYPE_30_DAYS\x10\x02\x12\x17\n" +
 	"\x13PERIOD_TYPE_90_DAYS\x10\x03\x12\x16\n" +
-	"\x12PERIOD_TYPE_CUSTOM\x10\x04*l\n" +
+	"\x12PERIOD_TYPE_CUSTOM\x10\x04\x12\x18\n" +
+	"\x14PERIOD_TYPE_3_MONTHS\x10\x05\x12\x18\n" +
+	"\x14PERIOD_TYPE_6_MONTHS\x10\x06\x12\x16\n" +
+	"\x12PERIOD_TYPE_1_YEAR\x10\a\x12\x18\n" +
+	"\x14PERIOD_TYPE_ALL_TIME\x10\b*l\n" +
 	"\vGranularity\x12\x1b\n" +
 	"\x17GRANULARITY_UNSPECIFIED\x10\x00\x12\x13\n" +
 	"\x0fGRANULARITY_DAY\x10\x01\x12\x14\n" +
 	"\x10GRANULARITY_WEEK\x10\x02\x12\x15\n" +
 	"\x11GRANULARITY_MONTH\x10\x03B\x87\x01\n" +
-	"\fcom.arian.v1B\n" +
-	"EnumsProtoP\x01Z*arian-parser/internal/gen/arian/v1;arianv1\xa2\x02\x03AXX\xaa\x02\bArian.V1\xca\x02\bArian\\V1\xe2\x02\x14Arian\\V1\\GPBMetadata\xea\x02\tArian::V1b\x06proto3"
+	"\vcom.null.v1B\n" +
+	"EnumsProtoP\x01Z-null-email-parser/internal/gen/null/v1;nullv1\xa2\x02\x03NXX\xaa\x02\aNull.V1\xca\x02\bNull_\\V1\xe2\x02\x14Null_\\V1\\GPBMetadata\xea\x02\bNull::V1b\x06proto3"
 
 var (
-	file_arian_v1_enums_proto_rawDescOnce sync.Once
-	file_arian_v1_enums_proto_rawDescData []byte
+	file_null_v1_enums_proto_rawDescOnce sync.Once
+	file_null_v1_enums_proto_rawDescData []byte
 )
 
-func file_arian_v1_enums_proto_rawDescGZIP() []byte {
-	file_arian_v1_enums_proto_rawDescOnce.Do(func() {
-		file_arian_v1_enums_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_arian_v1_enums_proto_rawDesc), len(file_arian_v1_enums_proto_rawDesc)))
+func file_null_v1_enums_proto_rawDescGZIP() []byte {
+	file_null_v1_enums_proto_rawDescOnce.Do(func() {
+		file_null_v1_enums_proto_rawDescData = protoimpl.X.CompressGZIP(unsafe.Slice(unsafe.StringData(file_null_v1_enums_proto_rawDesc), len(file_null_v1_enums_proto_rawDesc)))
 	})
-	return file_arian_v1_enums_proto_rawDescData
+	return file_null_v1_enums_proto_rawDescData
 }
 
-var file_arian_v1_enums_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
-var file_arian_v1_enums_proto_goTypes = []any{
-	(AccountType)(0),          // 0: arian.v1.AccountType
-	(TransactionDirection)(0), // 1: arian.v1.TransactionDirection
-	(PeriodType)(0),           // 2: arian.v1.PeriodType
-	(Granularity)(0),          // 3: arian.v1.Granularity
+var file_null_v1_enums_proto_enumTypes = make([]protoimpl.EnumInfo, 4)
+var file_null_v1_enums_proto_goTypes = []any{
+	(AccountType)(0),          // 0: null.v1.AccountType
+	(TransactionDirection)(0), // 1: null.v1.TransactionDirection
+	(PeriodType)(0),           // 2: null.v1.PeriodType
+	(Granularity)(0),          // 3: null.v1.Granularity
 }
-var file_arian_v1_enums_proto_depIdxs = []int32{
+var file_null_v1_enums_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for method output_type
 	0, // [0:0] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -293,26 +309,26 @@ var file_arian_v1_enums_proto_depIdxs = []int32{
 	0, // [0:0] is the sub-list for field type_name
 }
 
-func init() { file_arian_v1_enums_proto_init() }
-func file_arian_v1_enums_proto_init() {
-	if File_arian_v1_enums_proto != nil {
+func init() { file_null_v1_enums_proto_init() }
+func file_null_v1_enums_proto_init() {
+	if File_null_v1_enums_proto != nil {
 		return
 	}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
-			RawDescriptor: unsafe.Slice(unsafe.StringData(file_arian_v1_enums_proto_rawDesc), len(file_arian_v1_enums_proto_rawDesc)),
+			RawDescriptor: unsafe.Slice(unsafe.StringData(file_null_v1_enums_proto_rawDesc), len(file_null_v1_enums_proto_rawDesc)),
 			NumEnums:      4,
 			NumMessages:   0,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
-		GoTypes:           file_arian_v1_enums_proto_goTypes,
-		DependencyIndexes: file_arian_v1_enums_proto_depIdxs,
-		EnumInfos:         file_arian_v1_enums_proto_enumTypes,
+		GoTypes:           file_null_v1_enums_proto_goTypes,
+		DependencyIndexes: file_null_v1_enums_proto_depIdxs,
+		EnumInfos:         file_null_v1_enums_proto_enumTypes,
 	}.Build()
-	File_arian_v1_enums_proto = out.File
-	file_arian_v1_enums_proto_goTypes = nil
-	file_arian_v1_enums_proto_depIdxs = nil
+	File_null_v1_enums_proto = out.File
+	file_null_v1_enums_proto_goTypes = nil
+	file_null_v1_enums_proto_depIdxs = nil
 }
