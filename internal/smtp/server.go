@@ -17,13 +17,14 @@ type Handler interface {
 }
 
 type Server struct {
-	addr       string
-	domain     string
-	handler    Handler
-	log        *log.Logger
-	smtpServer *smtpd.Server
-	tlsCert    string
-	tlsKey     string
+	addr        string
+	domain      string
+	handler     Handler
+	log         *log.Logger
+	smtpServer  *smtpd.Server
+	tlsCert     string
+	tlsKey      string
+	tlsRequired bool
 }
 
 func NewServer(addr, domain string, handler Handler) *Server {
@@ -35,9 +36,10 @@ func NewServer(addr, domain string, handler Handler) *Server {
 	}
 }
 
-func (s *Server) WithTLS(certFile, keyFile string) *Server {
+func (s *Server) WithTLS(certFile, keyFile string, required bool) *Server {
 	s.tlsCert = certFile
 	s.tlsKey = keyFile
+	s.tlsRequired = required
 	return s
 }
 
@@ -60,7 +62,13 @@ func (s *Server) Start(ctx context.Context) error {
 			Certificates: []tls.Certificate{cert},
 			ServerName:   s.domain,
 		}
-		s.log.Info("starting smtp server with TLS", "addr", s.addr, "domain", s.domain)
+		s.smtpServer.TLSRequired = s.tlsRequired
+
+		if s.tlsRequired {
+			s.log.Info("starting smtp server with TLS (required)", "addr", s.addr, "domain", s.domain)
+		} else {
+			s.log.Info("starting smtp server with TLS (opportunistic)", "addr", s.addr, "domain", s.domain)
+		}
 	} else {
 		s.log.Info("starting smtp server without TLS", "addr", s.addr, "domain", s.domain)
 	}
@@ -79,7 +87,7 @@ func (s *Server) Start(ctx context.Context) error {
 var uuidPattern = regexp.MustCompile(`^([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})@`)
 
 func (s *Server) mailHandler(origin net.Addr, from string, to []string, data []byte) error {
-	s.log.Debug("received email", "from", from, "to", to, "size", len(data))
+	s.log.Info("received email", "from", from, "to", to, "size", len(data))
 
 	// extract uuid from first recipient
 	if len(to) == 0 {
@@ -90,12 +98,11 @@ func (s *Server) mailHandler(origin net.Addr, from string, to []string, data []b
 
 	matches := uuidPattern.FindStringSubmatch(recipient)
 	if len(matches) < 2 {
-		s.log.Warn("invalid recipient format", "to", recipient)
+		s.log.Warn("invalid recipient format", "to", recipient, "from", from)
 		return fmt.Errorf("invalid recipient format, expected <uuid>@domain")
 	}
 
 	userID := matches[1]
-	s.log.Info("processing email for user", "user_id", userID, "from", from)
 
 	return s.handler.ProcessEmail(userID, from, to, data)
 }

@@ -1,7 +1,6 @@
 package config
 
 import (
-	"flag"
 	"os"
 	"strings"
 
@@ -16,20 +15,17 @@ type Config struct {
 	SMTPAddress string // SMTP server address
 	GRPCAddress string // gRPC server address
 
-	TLSCert string // TLS certificate file path
-	TLSKey  string // TLS key file path
+	TLSCert     string // TLS certificate file path
+	TLSKey      string // TLS key file path
+	TLSRequired bool   // enforce TLS for SMTP connections (default: true if certs provided)
+
+	UnsafeSaveEML bool // save incoming emails to disk for debugging
 
 	LogLevel log.Level // logging level
 }
 
-// parseAddress ensures the address is in the correct format for network listeners.
-// If the input is just a port (e.g. "2525"), it returns ":2525".
-// If the input is already an address (e.g. "0.0.0.0:2525" or ":2525"), it returns it unchanged.
-// Examples:
-//
-//	parseAddress("2525")         // ":2525"
-//	parseAddress(":2525")        // ":2525"
-//	parseAddress("0.0.0.0:2525") // "0.0.0.0:2525"
+// safely parse whatever port or address the user provides
+// handdles cases like "8080", ":8080", "127.0.0.1:8080"
 func parseAddress(port string) string {
 	port = strings.TrimSpace(port)
 	if strings.Contains(port, ":") {
@@ -38,13 +34,7 @@ func parseAddress(port string) string {
 	return ":" + port
 }
 
-// Load reads configuration from environment variables and command-line flags
 func Load() Config {
-	smtpAddress := flag.String("smtp-port", "2525", "SMTP server port (e.g. 2525, :2525, 0.0.0.0:2525)")
-	grpcAddress := flag.String("grpc-port", "50052", "gRPC server port (e.g. 50052, :50052, 0.0.0.0:50052)")
-
-	flag.Parse()
-
 	nullCoreURL := os.Getenv("NULL_CORE_URL")
 	if nullCoreURL == "" {
 		panic("NULL_CORE_URL environment variable is required")
@@ -60,19 +50,39 @@ func Load() Config {
 		panic("DOMAIN environment variable is required")
 	}
 
+	// SMTP and gRPC addresses with defaults
+	smtpAddress := os.Getenv("SMTP_PORT")
+	if smtpAddress == "" {
+		smtpAddress = "127.0.0.1:2525"
+	}
+
+	grpcAddress := os.Getenv("GRPC_PORT")
+	if grpcAddress == "" {
+		grpcAddress = "127.0.0.1:50052"
+	}
+
 	logLevel, err := log.ParseLevel(os.Getenv("LOG_LEVEL"))
 	if err != nil {
 		logLevel = log.InfoLevel
 	}
 
+	tlsCert := os.Getenv("TLS_CERT")
+	tlsKey := os.Getenv("TLS_KEY")
+
+	// TLS is required by default when certificates are provided
+	// Can be disabled with UNSAFE_DISABLE_TLS_REQUIRED=true
+	tlsRequired := tlsCert != "" && tlsKey != "" && os.Getenv("UNSAFE_DISABLE_TLS_REQUIRED") == ""
+
 	return Config{
-		NullCoreURL: nullCoreURL,
-		APIKey:      apiKey,
-		Domain:      domain,
-		SMTPAddress: parseAddress(*smtpAddress),
-		GRPCAddress: parseAddress(*grpcAddress),
-		TLSCert:     os.Getenv("TLS_CERT"),
-		TLSKey:      os.Getenv("TLS_KEY"),
-		LogLevel:    logLevel,
+		NullCoreURL:   nullCoreURL,
+		APIKey:        apiKey,
+		Domain:        domain,
+		SMTPAddress:   parseAddress(smtpAddress),
+		GRPCAddress:   parseAddress(grpcAddress),
+		TLSCert:       tlsCert,
+		TLSKey:        tlsKey,
+		TLSRequired:   tlsRequired,
+		UnsafeSaveEML: os.Getenv("UNSAFE_SAVE_EML") != "",
+		LogLevel:      logLevel,
 	}
 }

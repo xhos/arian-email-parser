@@ -18,21 +18,23 @@ import (
 )
 
 type EmailHandler struct {
-	API *api.Client
-	Log *log.Logger
+	API           *api.Client
+	Log           *log.Logger
+	UnsafeSaveEML bool
 }
 
-func NewEmailHandler(apiClient *api.Client, log *log.Logger) *EmailHandler {
+func NewEmailHandler(apiClient *api.Client, log *log.Logger, unsafeSaveEML bool) *EmailHandler {
 	return &EmailHandler{
-		API: apiClient,
-		Log: log.WithPrefix("handler"),
+		API:           apiClient,
+		Log:           log.WithPrefix("handler"),
+		UnsafeSaveEML: unsafeSaveEML,
 	}
 }
 
 func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []byte) error {
 	h.Log.Info("processing email", "user_uuid", userUUID, "from", from)
 
-	if os.Getenv("SAVE_EML") != "" {
+	if h.UnsafeSaveEML {
 		if err := h.saveEmailToFile(userUUID, from, data); err != nil {
 			h.Log.Warn("failed to save debug email file", "err", err)
 		}
@@ -49,27 +51,25 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 
 	msg, decoded, err := email.ParseMessage(data)
 	if err != nil {
-		h.Log.Error("failed to parse email message", "err", err)
+		h.Log.Error("failed to parse email message", "user_uuid", userUUID, "from", from, "err", err)
 		return nil
 	}
 
 	meta, err := parser.ToEmailMeta(fmt.Sprintf("%s-%d", userUUID, len(data)), msg, decoded)
 	if err != nil {
-		h.Log.Error("failed to parse email metadata", "err", err)
+		h.Log.Error("failed to parse email metadata", "user_uuid", userUUID, "from", from, "err", err)
 		return nil
 	}
 
-	h.Log.Debug("email content", "subject", meta.Subject, "text", meta.Text)
-
 	prsr := parser.Find(meta)
 	if prsr == nil {
-		h.Log.Info("no parser matched", "user_uuid", userUUID, "subject", meta.Subject)
+		h.Log.Warn("no parser matched for email", "user_uuid", userUUID, "from", from, "subject", meta.Subject)
 		return nil
 	}
 
 	txn, err := prsr.Parse(meta)
 	if err != nil {
-		h.Log.Error("parse failed", "user_uuid", userUUID, "err", err)
+		h.Log.Error("parser failed to extract transaction", "user_uuid", userUUID, "from", from, "subject", meta.Subject, "err", err)
 		return nil
 	}
 	if txn == nil {
@@ -90,7 +90,7 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 
 	accounts, err := h.API.GetAccounts(userID)
 	if err != nil {
-		h.Log.Error("failed to fetch accounts", "err", err)
+		h.Log.Error("failed to fetch accounts", "user_uuid", userUUID, "err", err)
 		return nil
 	}
 
@@ -104,18 +104,21 @@ func (h *EmailHandler) ProcessEmail(userUUID, from string, to []string, data []b
 
 	accountMappings, err := loadAccountMappings()
 	if err != nil {
-		h.Log.Error("failed to load account mappings", "err", err)
+		h.Log.Error("failed to load account mappings", "user_uuid", userUUID, "err", err)
 		return nil
 	}
 
 	if err := h.resolveAccount(userUUID, txn, accountMap, accountMappings, user); err != nil {
-		return err
+		h.Log.Error("failed to resolve account", "user_uuid", userUUID, "from", from, "err", err)
+		return nil
 	}
 
 	if err := h.API.CreateTransaction(userID, txn); err != nil {
-		h.Log.Error("failed to create transaction", "user_uuid", userUUID, "err", err)
+		h.Log.Error("failed to create transaction", "user_uuid", userUUID, "from", from, "err", err)
 		return nil
 	}
+
+	h.Log.Info("transaction created successfully", "user_uuid", userUUID, "from", from, "bank", txn.TxBank, "amount", txn.TxAmount, "currency", txn.TxCurrency)
 
 	return nil
 }
@@ -159,7 +162,7 @@ func (h *EmailHandler) resolveAccount(userUUID string, txn *domain.Transaction, 
 	noAccountParsed := txn.TxAccount == ""
 
 	if noAccountParsed {
-		h.Log.Warn("no account parsed from email; skipping transaction", "user_uuid", userUUID)
+		h.Log.Warn("no account parsed from email; skipping transaction", "user_uuid", userUUID, "bank", txn.TxBank)
 		return nil
 	}
 

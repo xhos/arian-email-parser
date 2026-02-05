@@ -28,8 +28,8 @@ func main() {
 
 	logger.Debug("debug is enabled")
 
-	if os.Getenv("SAVE_EML") != "" {
-		logger.Info("SAVE_EML is enabled, emails will be saved to disk")
+	if cfg.UnsafeSaveEML {
+		logger.Warn("UNSAFE_SAVE_EML is enabled, emails will be saved to disk")
 	}
 
 	// ----- api client -------------
@@ -51,10 +51,10 @@ func main() {
 	logger.Info("null-core connectivity confirmed")
 
 	// ----- services ---------------
-	handler := smtp.NewEmailHandler(apiClient, logger)
+	handler := smtp.NewEmailHandler(apiClient, logger, cfg.UnsafeSaveEML)
 	smtpServer := smtp.NewServer(cfg.SMTPAddress, cfg.Domain, handler)
 	if cfg.TLSCert != "" && cfg.TLSKey != "" {
-		smtpServer = smtpServer.WithTLS(cfg.TLSCert, cfg.TLSKey)
+		smtpServer = smtpServer.WithTLS(cfg.TLSCert, cfg.TLSKey, cfg.TLSRequired)
 	}
 
 	grpcHealthSrv, err := grpc.NewHealthServer(cfg.GRPCAddress)
