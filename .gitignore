@@ -10,4 +10,3 @@ cfg/
 *.pem
 tmp/
 certs/
-account-mappings.txt
