@@ -1,56 +1,49 @@
 # null-email-parser
 
-null-email-parser is a way to automaticly ingest emails into [null-core](https://github.com/xhos/null-core) from emails. It just runs as an smtp server, so you are expected to set up forwarding rules in your email client to pipe the bank email here. The parser extracts relevant transaction information using bank-specific parsers, and sends over the data to [null-core](https://github.com/xhos/null-core), the backend.
+null-email-parser is a stateless microservice that exposes and SMTP server as a way to automaticly ingest transactions into [null-core](https://github.com/xhos/null-core) via bank emails. The service has an easily extensible parser system which allows adding support for new banks with minimal effort. The inteded way to use this is to setup bank email notifications to be forwarder to your personal email inbox, and then have those emails forwarded to this service. This service will then parse the emails and send the transaction data to null-core via its gRPC API.
 
 ## why?
 
-Some banks do not have an API or any clean way for accessing transactions (RBC, I'm looking at you). Sometimes they offer csv exports, but those for some reason don't have half the transactions, and it's not automatic anyways. So here we are, parsing emails to get the data we need. Like cavemen.
+some banks do not have an API or any clean way for accessing transactions. Emails are often the only method to keep the transaction data up to date automaticly. So here we are, parsing emails to get the data we need. Like cavemen.
 
-## ⚙️ config
+## config
 
-### cli params
+All configuration is done via environment variables.
 
-| param          | description            | default  |
-|----------------|------------------------|----------|
-| `--smtp-port`  | smtp server port       | `2525`   |
-| `--port`       | grpc health port       | `50052`  |
+| variable                        | description                            | default            | required?  |
+|---------------------------------|----------------------------------------|--------------------|------------|
+| `API_KEY`                       | authentication key for null-core       |                    | [x]        |
+| `NULL_CORE_URL`                 | null-core backend url                  |                    | [x]        |
+| `DOMAIN`                        | email domain to serve                  |                    | [x]        |
+| `SMTP_PORT`                     | smtp server address                    | `127.0.0.1:2525`   | [ ]        |
+| `GRPC_PORT`                     | grpc health check address              | `127.0.0.1:50052`  | [ ]        |
+| `TLS_KEY`                       | tls private key file path              |                    | [ ]        |
+| `LOG_LEVEL`                     | log level (debug, info, warn, error)   | `info`             | [ ]        |
+| `TLS_CERT`                      | tls certificate file path              |                    | [ ]        |
+| `UNSAFE_DISABLE_TLS_REQUIRED`   | allow opportunistic TLS                | `false`            | [ ]        |
+| `UNSAFE_SAVE_EML`               | save incoming emails as .eml files     | `false`            | [ ]        |
 
-### environment variables
-
-| variable          | description                     | default  | required?  |
-|-------------------|---------------------------------|----------|------------|
-| `API_KEY`         | authentication key for null-core|          | [x]        |
-| `NULL_CORE_URL`   | null-core backend url           |          | [x]        |
-| `DOMAIN`          | email domain to serve           |          | [x]        |
-| `LOG_LEVEL`   | log level (debug, info, warn)   | `info`   | [ ]        |
-| `TLS_CERT`    | tls certificate file path       |          | [ ]        |
-| `TLS_KEY`     | tls private key file path       |          | [ ]        |
-| `SAVE_EML`    | save incoming emails as .eml    | `false`  | [ ]        |
-
-- the `LOG_LEVEL=debug` env makes it so the incoming email contents are logged, which is useful for accepting forwarding rules
+- `SMTP_PORT` and `GRPC_PORT` can be specified as just the port number (e.g., `2525`), with colon prefix (`:2525`), or as full address (`0.0.0.0:2525`)
+- by default, services bind to `127.0.0.1` (localhost only) for security. use `0.0.0.0:port` to expose externally
+- when `TLS_CERT` and `TLS_KEY` are provided, TLS is required by default. set `UNSAFE_DISABLE_TLS_REQUIRED` to allow opportunistic TLS (accept non-TLS connections)
+- email body content is never logged for privacy/security reasons. use `UNSAFE_SAVE_EML` to save emails to disk for debugging parsers
+- parsing failures are logged at ERROR level for visibility in monitoring
 
 ## setup
 
-intended for use with docker compose, instructions are to be added later. #TODO
+when setting up your bank to forward emails to this service, use the email address format `uuid@your-domain.com`, where `uuid` is your null-core user ID. This allows the service to associate incoming emails with the correct user account. You can obtain your UUID from null-core logs or the settings page in null-web.
 
-most email providers, when you set up forwarding, require you to confirm it by clicking a link in the email. you can see the contents of the emails by either setting `SAVE_EML` or simply setting `LOG_LEVEL` to `debug`, that will print all the incoming email contents to logs. this is, of course, intended for one-time forwarding setup, not constant use.
+most email providers, when you set up forwarding, require you to confirm it by clicking a link in the email. you can see the confirmation link by setting `UNSAFE_SAVE_EML` to save emails as .eml files, then opening them in a text editor. This is intended for one-time forwarding setup, not constant use.
+
+if your domain is hosted on Cloudflare, you can use the `get-certs.sh` script provided to obtain said TLS certs for your domain by using Cloudflare's API. You will need to set `CLOUDFLARE_API_TOKEN` and `LETSENCRYPT_EMAIL` for the script to work. Point `TLS_CERT` and `TLS_KEY` to the obtained cert files. The script will not handle renewals.
+
+> [!IMPORTANT]
+> neither the service itself or get-certs.sh handle automatic renewal of TLS certificates. You will need to use whatever method that makes sense for your enviroment to update the certs file and restart the service. This service handles downtime well, since emails will be re-tried by the sending server.
 
 ## development
 
-- I highly recommend to use `devenv` for a consistent development environment. it installs all necessary dependencies and provides helpers.
-- `SAVE_EML` is useful for developing new parsers, it saves incoming emails as `.eml` files in the `emails/` directory for later inspection.
-
-### project structure
-
-- `cmd/main.go`: The main entry point for the application.
-- `internal/`: Contains the core logic of the application.
-  - `db/`: Database interaction logic (PostgreSQL).
-  - `email/`: Email parsing logic.
-    - `all/`: Imports all specific bank parsers.
-    - `rbc/`: Example parser for RBC emails (contains `deposit.go`, `purchase.go`, `withdrawal.go`).
-  - `smtp/`: smtp server implementation to receive emails.
-  - `parser/`: Defines common interfaces and helpers for email parsers.
-- `devenv.nix`: Configuration for the `devenv` development environment.
+- `UNSAFE_SAVE_EML` is useful for developing new parsers, it saves incoming emails as `.eml` files in the `emails/` directory for later inspection.
+- it is recommended to use the provided nix flake for acess to development scripts.
 
 ### adding new parsers
 

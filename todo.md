@@ -1,0 +1,2 @@
+- [ ] enforce the verification of sender address to match the user's configured email ingestion address
+- [ ] implement DKIM and SPF checks for incoming emails to prevent spoofing
